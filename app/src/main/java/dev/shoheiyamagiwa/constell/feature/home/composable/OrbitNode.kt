@@ -53,14 +53,15 @@ fun CenterOrbitNode(
     modifier: Modifier = Modifier,
     size: Dp = 128.dp,
     growRadius: Dp = 16.dp,
+    isFocusing: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     val baseSize = 128.dp
     val fontSize = (16.0F * (size.value / baseSize.value))
     val fontHeight = (16.0F * (size.value / baseSize.value) * 1.5F)
 
-    val targetBorderColor = Slate600
-    val targetGlowColor = Blue500
+    val targetBorderColor = if (isFocusing) Purple500.copy(alpha = 0.8F) else Slate600
+    val targetGlowColor = if (isFocusing) Purple500 else Blue500
 
     val borderColor by animateColorAsState(targetValue = targetBorderColor, label = "borderColor")
     val glowColor by animateColorAsState(targetValue = targetGlowColor, label = "glowColor")
@@ -75,12 +76,15 @@ fun CenterOrbitNode(
         ),
         label = "pulseAlpha"
     )
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(size)
-            .glow(color = glowColor, radius = growRadius, alpha = 0.4F)
+            .glow(
+                color = glowColor,
+                radius = if (isFocusing) growRadius else growRadius * 0.8F,
+                alpha = 0.4F
+            )
             .clip(CircleShape)
             .background(color = Slate800.copy(alpha = 0.8F))
             .border(width = 1.dp, color = borderColor, shape = CircleShape)

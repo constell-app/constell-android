@@ -7,12 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.shoheiyamagiwa.constell.feature.home.composable.extensions.dotBackground
+import dev.shoheiyamagiwa.constell.ui.theme.Sky900
+import dev.shoheiyamagiwa.constell.ui.theme.Slate600
+import dev.shoheiyamagiwa.constell.ui.theme.Slate900
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -23,15 +25,18 @@ fun ConstellationWorld(
     centerNodeTitle: String,
     centerNodeRadius: Dp = 64.dp,
     satelliteNodeTitles: List<String>,
-    satelliteNodeRadius: Dp = 44.dp,
+    satelliteNodeRadius: Dp = 42.dp,
     nodeGap: Dp = 150.dp,
-    edgeWidth: Dp,
+    edgeWidth: Dp = 2.dp,
+    onCenterNodeClick: () -> Unit,
+    onSatelliteNodeClick: (nodeId: Int) -> Unit,
+    isFocusing: Boolean = false
 ) {
     Box(
         modifier = modifier
-            .background(Color(0xFF0F172A))
+            .background(color = Slate900)
             .dotBackground(
-                dotColor = Color(0xFF475569),
+                dotColor = Slate600,
                 dotRadius = 1.5.dp,
                 spacing = 30.dp,
                 alpha = 0.3F
@@ -40,11 +45,22 @@ fun ConstellationWorld(
         Layout(
             content = {
                 Box(modifier = Modifier.layoutId("centerNode")) {
-                    CenterOrbitNode(title = centerNodeTitle, size = centerNodeRadius * 2)
+                    CenterOrbitNode(
+                        title = centerNodeTitle,
+                        size = centerNodeRadius * 2,
+                        isFocusing = isFocusing,
+                        onClick = onCenterNodeClick
+                    )
                 }
-                satelliteNodeTitles.forEach {
+                satelliteNodeTitles.forEachIndexed { index, title ->
                     Box(modifier = Modifier.layoutId("satelliteNode")) {
-                        SatelliteOrbitNode(title = it, size = satelliteNodeRadius * 2)
+                        SatelliteOrbitNode(
+                            title = title,
+                            size = satelliteNodeRadius * 2,
+                            onClick = {
+                                onSatelliteNodeClick(index)
+                            }
+                        )
                     }
                 }
             },
@@ -68,7 +84,7 @@ fun ConstellationWorld(
                         val angleRadian = (angle / 180) * PI.toFloat()
 
                         drawLine(
-                            color = Color(0xFFFFFFFF),
+                            color = Sky900,
                             start = Offset(
                                 x = centerX + (centerNodeRadius.toPx() * cos(angleRadian)),
                                 y = centerY + (centerNodeRadius.toPx() * sin(angleRadian))

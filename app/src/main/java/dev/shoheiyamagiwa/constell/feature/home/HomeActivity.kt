@@ -9,6 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.shoheiyamagiwa.constell.feature.home.composable.ConstellationWorld
@@ -29,11 +31,15 @@ class HomeActivity : ComponentActivity() {
             ConstellTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
                     Box(modifier = Modifier.fillMaxSize()) {
+                        val isFocusing = remember { mutableStateOf(false) }
                         ConstellationWorld(
                             modifier = Modifier,
                             nodeGap = 144.dp,
-                            edgeWidth = 1.dp,
+                            edgeWidth = 2.dp,
                             centerNodeTitle = "Next.js",
+                            onCenterNodeClick = {
+                                isFocusing.value = !isFocusing.value
+                            },
                             satelliteNodeTitles = listOf(
                                 "React",
                                 "Vercel",
@@ -41,7 +47,11 @@ class HomeActivity : ComponentActivity() {
                                 "v0.dev",
                                 "Tailwind CSS",
                                 "Image Optimization",
-                            )
+                            ),
+                            onSatelliteNodeClick = { nodeId ->
+
+                            },
+                            isFocusing = isFocusing.value
                         )
                     }
                 }
