@@ -37,14 +37,14 @@ class HomeActivity : ComponentActivity() {
                             centerContent = {
                                 CenterOrbitNode(title = "Next.js")
                             },
-                            satelliteContents = {
-                                SatelliteOrbitNode(title = "React", size = 88.dp)
-                                SatelliteOrbitNode(title = "Vercel", size = 88.dp)
-                                SatelliteOrbitNode(title = "Server Component", size = 88.dp)
-                                SatelliteOrbitNode(title = "v0.dev", size = 88.dp)
-                                SatelliteOrbitNode(title = "Tailwind CSS", size = 88.dp)
-                                SatelliteOrbitNode(title = "Image Optimization", size = 88.dp)
-                            }
+                            satelliteContents = listOf(
+                                { SatelliteOrbitNode(title = "React", size = 88.dp) },
+                                { SatelliteOrbitNode(title = "Vercel", size = 88.dp) },
+                                { SatelliteOrbitNode(title = "Server Component", size = 88.dp) },
+                                { SatelliteOrbitNode(title = "v0.dev", size = 88.dp) },
+                                { SatelliteOrbitNode(title = "Tailwind CSS", size = 88.dp) },
+                                { SatelliteOrbitNode(title = "Image Optimization", size = 88.dp) },
+                            )
                         )
                     }
                 }

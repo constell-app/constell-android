@@ -19,7 +19,7 @@ import kotlin.math.sin
 fun ConstellationWorld(
     modifier: Modifier = Modifier,
     centerContent: @Composable () -> Unit,
-    satelliteContents: @Composable () -> Unit,
+    satelliteContents: List<@Composable () -> Unit>,
     nodeGap: Dp = 150.dp
 ) {
     Box(
@@ -36,10 +36,14 @@ fun ConstellationWorld(
             Box(modifier = Modifier.layoutId("centerNode")) {
                 centerContent()
             }
-            satelliteContents()
+            satelliteContents.forEach {
+                Box(modifier = Modifier.layoutId("satelliteNode")) {
+                    it()
+                }
+            }
         }, modifier = Modifier.fillMaxSize()) { measurables, constraints ->
             val centerMeasurables = measurables.filter { it.layoutId == "centerNode" }
-            val satelliteMeasurables = measurables.filter { it.layoutId != "centerNode" }
+            val satelliteMeasurables = measurables.filter { it.layoutId == "satelliteNode" }
 
             val childrenConstraints = constraints.copy(minWidth = 0, minHeight = 0)
 
@@ -53,8 +57,6 @@ fun ConstellationWorld(
 
             val layoutWidth = constraints.maxWidth
             val layoutHeight = constraints.maxHeight
-
-            val satelliteCounts = placeableSatelliteContents.size
 
             layout(layoutWidth, layoutHeight) {
                 val centerX = layoutWidth / 2
@@ -70,7 +72,7 @@ fun ConstellationWorld(
 
                 // Place the satellite contents around the center contents
                 if (placeableSatelliteContents.isNotEmpty()) {
-                    val degreeUnit = 360.0F / satelliteCounts
+                    val degreeUnit = 360.0F / placeableSatelliteContents.size
                     val distance = nodeGap.toPx()
 
                     placeableSatelliteContents.forEachIndexed { index, content ->
