@@ -60,22 +60,26 @@ fun ConstellationWorld(
                     val centerX = layoutWidth / 2
                     val centerY = layoutHeight / 2
 
-                    val degreeUnit = 360.0F / satelliteNodeTitles.size
+                    val angleUnit = 360.0F / satelliteNodeTitles.size
                     val distance = nodeGap.toPx()
 
                     for (index in 0 until satelliteNodeTitles.size) {
-                        val degree = degreeUnit * index
-                        val radian = (degree / 180) * PI.toFloat()
+                        val angle = angleUnit * index
+                        val angleRadian = (angle / 180) * PI.toFloat()
 
                         drawLine(
                             color = Color(0xFFFFFFFF),
                             start = Offset(
-                                x = centerX + (centerNodeRadius.toPx() * cos(radian)),
-                                y = centerY + (centerNodeRadius.toPx() * sin(radian))
+                                x = centerX + (centerNodeRadius.toPx() * cos(angleRadian)),
+                                y = centerY + (centerNodeRadius.toPx() * sin(angleRadian))
                             ),
                             end = Offset(
-                                x = centerX + ((distance - satelliteNodeRadius.toPx()) * cos(radian)),
-                                y = centerY + ((distance - satelliteNodeRadius.toPx()) * sin(radian))
+                                x = centerX + ((distance - satelliteNodeRadius.toPx()) * cos(
+                                    angleRadian
+                                )),
+                                y = centerY + ((distance - satelliteNodeRadius.toPx()) * sin(
+                                    angleRadian
+                                ))
                             ),
                             strokeWidth = edgeWidth.toPx()
                         )
@@ -112,18 +116,18 @@ fun ConstellationWorld(
 
                 // Place the satellite contents around the center contents
                 if (placeableSatelliteContents.isNotEmpty()) {
-                    val degreeUnit = 360.0F / placeableSatelliteContents.size
+                    val angleUnit = 360.0F / placeableSatelliteContents.size
                     val distance = nodeGap.toPx()
 
                     placeableSatelliteContents.forEachIndexed { index, content ->
                         val contentPosX = centerX - (content.width / 2)
                         val contentPosY = centerY - (content.height / 2)
-                        val degree = degreeUnit * index
-                        val radian = (degree / 180) * PI
+                        val angle = angleUnit * index
+                        val angleRadian = (angle / 180) * PI
 
                         content.placeRelative(
-                            x = contentPosX + (distance * cos(radian)).toInt(),
-                            y = contentPosY + (distance * sin(radian)).toInt()
+                            x = contentPosX + (distance * cos(angleRadian)).toInt(),
+                            y = contentPosY + (distance * sin(angleRadian)).toInt()
                         )
                     }
                 }
