@@ -74,8 +74,8 @@ fun ConstellationWorld(
                                 y = centerY + (centerNodeRadius.toPx() * sin(radian))
                             ),
                             end = Offset(
-                                x = centerX + (distance * cos(radian)),
-                                y = centerY + (distance * sin(radian))
+                                x = centerX + ((distance - satelliteNodeRadius.toPx()) * cos(radian)),
+                                y = centerY + ((distance - satelliteNodeRadius.toPx()) * sin(radian))
                             ),
                             strokeWidth = edgeWidth.toPx()
                         )
