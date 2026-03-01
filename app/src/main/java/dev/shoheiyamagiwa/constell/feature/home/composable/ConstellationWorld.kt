@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.Dp
@@ -50,6 +49,9 @@ fun ConstellationWorld(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
+                    if (satelliteContents.isEmpty()) {
+                        return@drawBehind
+                    }
                     val layoutWidth = size.width
                     val layoutHeight = size.height
 
@@ -59,7 +61,7 @@ fun ConstellationWorld(
                     val degreeUnit = 360.0F / satelliteContents.size
                     val distance = nodeGap.toPx()
 
-                    for (index in 0..satelliteContents.size) {
+                    for (index in 0 until satelliteContents.size) {
                         val degree = degreeUnit * index
                         val radian = (degree / 180) * PI
 
@@ -67,10 +69,10 @@ fun ConstellationWorld(
                             color = Color(0xFFFFFFFF),
                             start = Offset(x = centerX, y = centerY),
                             end = Offset(
-                                x = centerX + (distance * cos(radian)).toInt(),
-                                y = centerY + (distance * sin(radian)).toInt()
+                                x = centerX + (distance * cos(radian)).toFloat(),
+                                y = centerY + (distance * sin(radian)).toFloat()
                             ),
-                            strokeWidth = Stroke.HairlineWidth * edgeWidth.toPx()
+                            strokeWidth = edgeWidth.toPx()
                         )
                     }
                 }
