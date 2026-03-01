@@ -20,8 +20,10 @@ import kotlin.math.sin
 @Composable
 fun ConstellationWorld(
     modifier: Modifier = Modifier,
-    centerContent: @Composable () -> Unit,
-    satelliteContents: List<@Composable () -> Unit>,
+    centerNodeTitle: String,
+    centerNodeRadius: Dp = 64.dp,
+    satelliteNodeTitles: List<String>,
+    satelliteNodeRadius: Dp = 44.dp,
     nodeGap: Dp = 150.dp,
     edgeWidth: Dp,
 ) {
@@ -38,18 +40,18 @@ fun ConstellationWorld(
         Layout(
             content = {
                 Box(modifier = Modifier.layoutId("centerNode")) {
-                    centerContent()
+                    CenterOrbitNode(title = centerNodeTitle, size = centerNodeRadius * 2)
                 }
-                satelliteContents.forEach {
+                satelliteNodeTitles.forEach {
                     Box(modifier = Modifier.layoutId("satelliteNode")) {
-                        it()
+                        SatelliteOrbitNode(title = it, size = satelliteNodeRadius * 2)
                     }
                 }
             },
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
-                    if (satelliteContents.isEmpty()) {
+                    if (satelliteNodeTitles.isEmpty()) {
                         return@drawBehind
                     }
                     val layoutWidth = size.width
@@ -58,19 +60,22 @@ fun ConstellationWorld(
                     val centerX = layoutWidth / 2
                     val centerY = layoutHeight / 2
 
-                    val degreeUnit = 360.0F / satelliteContents.size
+                    val degreeUnit = 360.0F / satelliteNodeTitles.size
                     val distance = nodeGap.toPx()
 
-                    for (index in 0 until satelliteContents.size) {
+                    for (index in 0 until satelliteNodeTitles.size) {
                         val degree = degreeUnit * index
-                        val radian = (degree / 180) * PI
+                        val radian = (degree / 180) * PI.toFloat()
 
                         drawLine(
                             color = Color(0xFFFFFFFF),
-                            start = Offset(x = centerX, y = centerY),
+                            start = Offset(
+                                x = centerX + (centerNodeRadius.toPx() * cos(radian)),
+                                y = centerY + (centerNodeRadius.toPx() * sin(radian))
+                            ),
                             end = Offset(
-                                x = centerX + (distance * cos(radian)).toFloat(),
-                                y = centerY + (distance * sin(radian)).toFloat()
+                                x = centerX + (distance * cos(radian)),
+                                y = centerY + (distance * sin(radian))
                             ),
                             strokeWidth = edgeWidth.toPx()
                         )

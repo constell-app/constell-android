@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.shoheiyamagiwa.constell.feature.home.composable.CenterOrbitNode
 import dev.shoheiyamagiwa.constell.feature.home.composable.ConstellationWorld
-import dev.shoheiyamagiwa.constell.feature.home.composable.SatelliteOrbitNode
 import dev.shoheiyamagiwa.constell.ui.theme.ConstellTheme
 
 class HomeActivity : ComponentActivity() {
@@ -35,16 +33,14 @@ class HomeActivity : ComponentActivity() {
                             modifier = Modifier,
                             nodeGap = 144.dp,
                             edgeWidth = 1.dp,
-                            centerContent = {
-                                CenterOrbitNode(title = "Next.js")
-                            },
-                            satelliteContents = listOf(
-                                { SatelliteOrbitNode(title = "React", size = 88.dp) },
-                                { SatelliteOrbitNode(title = "Vercel", size = 88.dp) },
-                                { SatelliteOrbitNode(title = "Server Component", size = 88.dp) },
-                                { SatelliteOrbitNode(title = "v0.dev", size = 88.dp) },
-                                { SatelliteOrbitNode(title = "Tailwind CSS", size = 88.dp) },
-                                { SatelliteOrbitNode(title = "Image Optimization", size = 88.dp) },
+                            centerNodeTitle = "Next.js",
+                            satelliteNodeTitles = listOf(
+                                "React",
+                                "Vercel",
+                                "Server Component",
+                                "v0.dev",
+                                "Tailwind CSS",
+                                "Image Optimization",
                             )
                         )
                     }
