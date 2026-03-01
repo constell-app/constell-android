@@ -34,6 +34,7 @@ class HomeActivity : ComponentActivity() {
                         ConstellationWorld(
                             modifier = Modifier,
                             nodeGap = 144.dp,
+                            edgeWidth = 1.dp,
                             centerContent = {
                                 CenterOrbitNode(title = "Next.js")
                             },

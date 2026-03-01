@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.Dp
@@ -20,7 +23,8 @@ fun ConstellationWorld(
     modifier: Modifier = Modifier,
     centerContent: @Composable () -> Unit,
     satelliteContents: List<@Composable () -> Unit>,
-    nodeGap: Dp = 150.dp
+    nodeGap: Dp = 150.dp,
+    edgeWidth: Dp,
 ) {
     Box(
         modifier = modifier
@@ -32,16 +36,45 @@ fun ConstellationWorld(
                 alpha = 0.3F
             )
     ) {
-        Layout(content = {
-            Box(modifier = Modifier.layoutId("centerNode")) {
-                centerContent()
-            }
-            satelliteContents.forEach {
-                Box(modifier = Modifier.layoutId("satelliteNode")) {
-                    it()
+        Layout(
+            content = {
+                Box(modifier = Modifier.layoutId("centerNode")) {
+                    centerContent()
                 }
-            }
-        }, modifier = Modifier.fillMaxSize()) { measurables, constraints ->
+                satelliteContents.forEach {
+                    Box(modifier = Modifier.layoutId("satelliteNode")) {
+                        it()
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .drawBehind {
+                    val layoutWidth = size.width
+                    val layoutHeight = size.height
+
+                    val centerX = layoutWidth / 2
+                    val centerY = layoutHeight / 2
+
+                    val degreeUnit = 360.0F / satelliteContents.size
+                    val distance = nodeGap.toPx()
+
+                    for (index in 0..satelliteContents.size) {
+                        val degree = degreeUnit * index
+                        val radian = (degree / 180) * PI
+
+                        drawLine(
+                            color = Color(0xFFFFFFFF),
+                            start = Offset(x = centerX, y = centerY),
+                            end = Offset(
+                                x = centerX + (distance * cos(radian)).toInt(),
+                                y = centerY + (distance * sin(radian)).toInt()
+                            ),
+                            strokeWidth = Stroke.HairlineWidth * edgeWidth.toPx()
+                        )
+                    }
+                }
+        ) { measurables, constraints ->
             val centerMeasurables = measurables.filter { it.layoutId == "centerNode" }
             val satelliteMeasurables = measurables.filter { it.layoutId == "satelliteNode" }
 
