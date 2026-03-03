@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">Constell</string>
+    <string name="app_name" translatable="false">Constell</string>
+    <string name="walkthrough_button_next">次へ</string>
+    <string name="walkthrough_button_start">はじめる</string>
+    <string name="walkthrough_button_skip">スキップ</string>
+    <string name="walkthrough_heading_content_forgotten">知識を集めるだけですか？</string>
+    <string name="walkthrough_desc_content_forgotten">ブックマークの山に埋もれた情報は、\\nやがて忘れ去られてしまいます。</string>
+    <string name="walkthrough_heading_content_feature">散らばった知識の「点」</string>
+    <string name="walkthrough_desc_content_feature">Web記事、メモ、閃いたアイデア。\\nConstellはあらゆる情報を保存します。</string>
+    <string name="walkthrough_heading_content_feature2">AIが文脈で「線」を結ぶ</string>
+    <string name="walkthrough_desc_content_feature2">保存するだけで、AIが意味を理解。\\n関連する知識を自動的につなぎ合わせます。</string>
+    <string name="walkthrough_heading_content_discover">あなただけの「知識の星座」</string>
+    <string name="walkthrough_desc_content_discover">思いがけない知識の交差点から、\\n新しいアイデアを発見しましょう。</string>
 </resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="walkthrough_button_next">Next</string>
+    <string name="walkthrough_button_start">Get Started</string>
+    <string name="walkthrough_button_skip">Skip</string>
+    <string name="walkthrough_heading_content_forgotten">Are you just collecting knowledge?</string>
+    <string name="walkthrough_desc_content_forgotten">Information buried in endless bookmarks\\nwill eventually be forgotten.</string>
+    <string name="walkthrough_heading_content_feature">Scattered \"dots\" of knowledge</string>
+    <string name="walkthrough_desc_content_feature">Web articles, notes, and sudden inspirations.\\nConstell captures every piece of information.</string>
+    <string name="walkthrough_heading_content_feature2">AI connects the \"lines\" by context</string>
+    <string name="walkthrough_desc_content_feature2">Just save it, and AI grasps the meaning.\\nIt automatically links related knowledge together.</string>
+    <string name="walkthrough_heading_content_discover">Your personal \"Constellation\"</string>
+    <string name="walkthrough_desc_content_discover">Discover new ideas from\\nunexpected intersections of knowledge.</string>
+</resources>
