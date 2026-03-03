@@ -25,6 +25,11 @@
             android:name=".feature.home.HomeActivity"
             android:exported="true"
             android:theme="@style/Theme.Constell" />
+
+        <activity
+            android:name=".feature.walkthrough.WalkthroughActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Constell" />
     </application>
 
 </manifest>
