@@ -20,11 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import dev.shoheiyamagiwa.constell.feature.walkthrough.ui.WalkthroughStep
-import dev.shoheiyamagiwa.constell.feature.walkthrough.walkthroughData
 import dev.shoheiyamagiwa.constell.ui.theme.Blue500
 import dev.shoheiyamagiwa.constell.ui.theme.Purple500
 
@@ -58,12 +54,8 @@ val edges = listOf(
     EdgeLine(8, 45.0F, 110.0F, 150.0F, 40.0F)
 )
 
-@Preview(showBackground = true, backgroundColor = 0xFF202020)
 @Composable
-public fun ConstellationGraphic(
-    @PreviewParameter(provider = WalkthroughStepProvider::class) walkthroughStep: WalkthroughStep,
-    modifier: Modifier = Modifier
-) {
+public fun ConstellationGraphic(walkthroughStep: WalkthroughStep, modifier: Modifier = Modifier) {
     val satelliteScale by animateFloatAsState(
         targetValue = if (walkthroughStep.showSatelliteNodes) 1.0F else 0.0F,
         animationSpec = spring(
@@ -144,6 +136,6 @@ public fun ConstellationGraphic(
     }
 }
 
-private class WalkthroughStepProvider : PreviewParameterProvider<WalkthroughStep> {
-    override val values = sequenceOf(walkthroughData[0], walkthroughData[1], walkthroughData[2], walkthroughData[3])
-}
+//private class WalkthroughStepProvider : PreviewParameterProvider<WalkthroughStep> {
+//    override val values = sequenceOf(walkthroughData[0], walkthroughData[1], walkthroughData[2], walkthroughData[3])
+//}
