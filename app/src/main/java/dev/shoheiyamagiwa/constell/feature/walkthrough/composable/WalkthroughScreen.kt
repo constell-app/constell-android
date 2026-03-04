@@ -31,8 +31,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -66,8 +68,13 @@ public fun WalkthroughScreen(modifier: Modifier = Modifier, viewModel: Walkthrou
 
     fun goToNextPage() {
         coroutineScope.launch {
-            viewModel.updateStep(pageIndex = pagerState.targetPage)
             pagerState.animateScrollToPage(pagerState.currentPage + 1)
+        }
+    }
+
+    LaunchedEffect(key1 = pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { pageIndex ->
+            viewModel.updateStep(pageIndex)
         }
     }
 
@@ -92,7 +99,7 @@ public fun WalkthroughScreen(modifier: Modifier = Modifier, viewModel: Walkthrou
             Spacer(modifier = Modifier.height(8.dp))
 
             HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().weight(0.75F)) { page ->
-                WalkthroughContent(step = currentStep)
+                WalkthroughContent(step = viewModel.getStepByPage(page))
             }
 
             Spacer(modifier = Modifier.height(16.dp))

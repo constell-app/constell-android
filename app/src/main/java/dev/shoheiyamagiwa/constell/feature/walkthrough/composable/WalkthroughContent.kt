@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.feature.walkthrough.ui.WalkthroughStep
 import dev.shoheiyamagiwa.constell.ui.theme.Blue600
 import dev.shoheiyamagiwa.constell.ui.theme.Purple600
@@ -39,7 +40,7 @@ public fun WalkthroughContent(step: WalkthroughStep, modifier: Modifier = Modifi
                 Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Constell", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
+            Text(text = stringResource(id = R.string.app_name), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
         } else {
             Text(text = stringResource(id = step.titleId), color = Slate100, fontSize = 22.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
         }
