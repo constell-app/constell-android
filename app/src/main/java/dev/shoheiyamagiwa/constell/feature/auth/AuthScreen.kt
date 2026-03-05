@@ -72,9 +72,16 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
                         subtitle = stringResource(id = R.string.auth_text_signup_subtitle)
                     )
 
-                    TabSwitcher()
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                    TODO("We should place AuthForm composable here")
+                    TabSwitcher(
+                        modifier = Modifier.fillMaxWidth(), authScreenState = screenState,
+                        onChangeToSignIn = {
+                            viewModel.updateToSignIn()
+                        }, onChangeToSignUp = {
+                            viewModel.updateToSignUp()
+                        }
+                    )
                 }
             }
         }
