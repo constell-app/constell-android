@@ -11,4 +11,6 @@
     <string name="walkthrough_desc_content_feature2">保存するだけで、AIが意味を理解。\\n関連する知識を自動的につなぎ合わせます。</string>
     <string name="walkthrough_heading_content_discover">あなただけの「知識の星座」</string>
     <string name="walkthrough_desc_content_discover">思いがけない知識の交差点から、\\n新しいアイデアを発見しましょう。</string>
+    <string name="auth_text_signup_title">Constellへようこそ</string>
+    <string name="auth_text_signup_subtitle">AIによるあなたの第2の脳</string>
 </resources>
