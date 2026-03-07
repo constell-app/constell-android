@@ -94,11 +94,7 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
     }
 
     fun onSubmit() {
-        when (screenState) {
-            is AuthScreenState.SignUp -> viewModel.signUp()
-            is AuthScreenState.SignIn -> viewModel.signIn()
-            else -> throw IllegalStateException("Invalid screen state: $screenState")
-        }
+        viewModel.submit()
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -145,9 +141,9 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
                     TabSwitcher(
                         modifier = Modifier.fillMaxWidth(), authScreenState = screenState,
                         onChangeToSignIn = {
-                            viewModel.updateToSignIn(email = currentEmail, password = currentPassword)
+                            viewModel.updateToSignIn()
                         }, onChangeToSignUp = {
-                            viewModel.updateToSignUp(email = currentEmail, password = currentPassword)
+                            viewModel.updateToSignUp()
                         }
                     )
 

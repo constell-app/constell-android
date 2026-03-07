@@ -35,23 +35,53 @@ public class AuthViewModel : ViewModel() {
     /**
      * Update the screen to the sign-up screen
      */
-    public fun updateToSignUp(displayName: String = "", email: String = "", password: String = "", confirmPassword: String = "") {
-        _screenState.value = AuthScreenState.SignUp(displayName, email, password, confirmPassword)
+    public fun updateToSignUp() {
+        when (val currentState = _screenState.value) {
+            is AuthScreenState.Loading -> {
+                _screenState.value = AuthScreenState.SignIn()
+            }
+
+            is AuthScreenState.SignIn -> {
+                _screenState.value = AuthScreenState.SignIn(currentState.email, currentState.password)
+            }
+
+            is AuthScreenState.SignUp -> {
+                return
+            }
+        }
     }
 
     /**
      * Update the screen to the sign-in screen
      */
-    public fun updateToSignIn(email: String = "", password: String = "") {
-        _screenState.value = AuthScreenState.SignIn(email, password)
+    public fun updateToSignIn() {
+        when (val currentState = _screenState.value) {
+            is AuthScreenState.Loading -> {
+                _screenState.value = AuthScreenState.SignIn()
+            }
+
+            is AuthScreenState.SignIn -> {
+                return
+            }
+
+            is AuthScreenState.SignUp -> {
+                _screenState.value = AuthScreenState.SignIn(currentState.email, currentState.password)
+            }
+        }
     }
 
-    public fun signUp() {
-        // TODO: Implement actual sign-up logic
-    }
+    public fun submit() {
+        when (_screenState.value) {
+            is AuthScreenState.SignUp -> {
+                // TODO: Implement sign up functionality
+            }
 
-    public fun signIn() {
-        // TODO: Implement actual sign-in logic
+            is AuthScreenState.SignIn -> {
+                // TODO: Implement sign in functionality
+            }
+
+            else -> throw IllegalStateException("Invalid screen state: $screenState")
+        }
     }
 
     /**
