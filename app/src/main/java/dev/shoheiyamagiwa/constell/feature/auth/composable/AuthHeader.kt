@@ -23,7 +23,7 @@ public fun AuthHeader(modifier: Modifier = Modifier, logo: @Composable () -> Uni
         Spacer(Modifier.height(24.dp))
         Text(text = title, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
         Spacer(Modifier.height(8.dp))
-        Text(text = subtitle, color = Slate400, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        Text(text = subtitle, color = Slate400, fontSize = 14.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
     }
 }
 
