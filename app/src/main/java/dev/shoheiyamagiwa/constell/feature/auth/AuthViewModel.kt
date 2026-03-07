@@ -113,6 +113,13 @@ public class AuthViewModel : ViewModel() {
             _screenState.value = currentFormData.copy(password = value)
         }
     }
+
+    public fun updateConfirmPassword(value: String) {
+        val currentState = _screenState.value
+        if (currentState is AuthScreenState.SignUp) {
+            _screenState.value = currentState.copy(confirmPassword = value)
+        }
+    }
 }
 
 public val authViewModelFactory = viewModelFactory {

@@ -80,6 +80,11 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
         else -> ""
     }
 
+    val currentConfirmPassword = when (val state = screenState) {
+        is AuthScreenState.SignUp -> state.confirmPassword
+        else -> ""
+    }
+
     fun onDisplayNameChanged(value: String) {
         viewModel.updateDisplayName(value)
     }
@@ -90,6 +95,10 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
 
     fun onPasswordChanged(value: String) {
         viewModel.updatePassword(value)
+    }
+
+    fun onConfirmPasswordChanged(value: String) {
+        viewModel.updateConfirmPassword(value)
     }
 
     fun onSubmit() {
@@ -174,6 +183,23 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
                             onMaskToggled = { isValueMasked = !isValueMasked },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                         )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Confirm Password
+                        AnimatedVisibility(visible = screenState is AuthScreenState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
+                            var isValueMasked by remember { mutableStateOf(value = true) }
+                            CustomTextField(
+                                value = currentConfirmPassword,
+                                onValueChange = { onConfirmPasswordChanged(value = it) },
+                                placeholder = "Confirm Password",
+                                leadingIcon = Icons.Default.Lock,
+                                maskValue = true,
+                                isValueMasked = isValueMasked,
+                                onMaskToggled = { isValueMasked = !isValueMasked },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(4.dp))
 
