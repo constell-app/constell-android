@@ -88,29 +88,29 @@ public class AuthViewModel : ViewModel() {
      * Update the display name field on the screen
      */
     public fun updateDisplayName(value: String) {
-        val currentScreenState = _screenState.value
-        if (currentScreenState is AuthScreenState.SignUp) {
-            _screenState.value = currentScreenState.copy(displayName = value)
+        val currentState = _screenState.value
+        if (currentState is AuthScreenState.SignUp) {
+            _screenState.value = currentState.copy(displayName = value)
         }
     }
 
     public fun updateEmail(value: String) {
-        val currentFormData = _screenState.value
-        if (currentFormData is AuthScreenState.SignUp) {
-            _screenState.value = currentFormData.copy(email = value)
+        val currentState = _screenState.value
+        if (currentState is AuthScreenState.SignUp) {
+            _screenState.value = currentState.copy(email = value)
         }
-        if (currentFormData is AuthScreenState.SignIn) {
-            _screenState.value = currentFormData.copy(email = value)
+        if (currentState is AuthScreenState.SignIn) {
+            _screenState.value = currentState.copy(email = value)
         }
     }
 
     public fun updatePassword(value: String) {
-        val currentFormData = _screenState.value
-        if (currentFormData is AuthScreenState.SignUp) {
-            _screenState.value = currentFormData.copy(password = value)
+        val currentState = _screenState.value
+        if (currentState is AuthScreenState.SignUp) {
+            _screenState.value = currentState.copy(password = value)
         }
-        if (currentFormData is AuthScreenState.SignIn) {
-            _screenState.value = currentFormData.copy(password = value)
+        if (currentState is AuthScreenState.SignIn) {
+            _screenState.value = currentState.copy(password = value)
         }
     }
 
