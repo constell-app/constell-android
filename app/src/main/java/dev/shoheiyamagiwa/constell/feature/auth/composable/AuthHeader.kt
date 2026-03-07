@@ -33,6 +33,6 @@ private fun AuthHeaderPreview() {
     AuthHeader(
         logo = { AppLogo() },
         title = "Welcome to Constell",
-        subtitle = "Your Second AI Brain"
+        subtitle = "Your AI Second Brain"
     )
 }
