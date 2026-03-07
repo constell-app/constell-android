@@ -38,7 +38,7 @@ public class AuthViewModel : ViewModel() {
     public fun updateToSignUp() {
         when (val currentState = _screenState.value) {
             is AuthScreenState.Loading -> {
-                _screenState.value = AuthScreenState.SignIn()
+                return
             }
 
             is AuthScreenState.SignIn -> {
@@ -57,7 +57,7 @@ public class AuthViewModel : ViewModel() {
     public fun updateToSignIn() {
         when (val currentState = _screenState.value) {
             is AuthScreenState.Loading -> {
-                _screenState.value = AuthScreenState.SignIn()
+                return
             }
 
             is AuthScreenState.SignIn -> {
