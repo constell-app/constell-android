@@ -11,9 +11,7 @@ import kotlinx.coroutines.launch
 
 public sealed class AuthScreenState {
     public object Loading : AuthScreenState()
-
     public data class SignUp(val displayName: String = "", val email: String = "", val password: String = "", val confirmPassword: String = "") : AuthScreenState()
-
     public data class SignIn(val email: String = "", val password: String = "") : AuthScreenState()
 }
 
@@ -28,9 +26,9 @@ public class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _screenState.value = AuthScreenState.Loading
 
-            delay(timeMillis = 2000L)  // TODO: Implement actual session restoring logic
+            delay(timeMillis = 1000L)  // TODO: Implement actual session restoring logic
 
-            _screenState.value = AuthScreenState.SignIn() // For now, just navigate to the sign-in screen
+            _screenState.value = AuthScreenState.SignIn(email = "", password = "") // For now, just navigate to the sign-in screen
         }
     }
 
@@ -46,6 +44,44 @@ public class AuthViewModel : ViewModel() {
      */
     public fun updateToSignIn(email: String = "", password: String = "") {
         _screenState.value = AuthScreenState.SignIn(email, password)
+    }
+
+    public fun signUp() {
+        // TODO: Implement actual sign-up logic
+    }
+
+    public fun signIn() {
+        // TODO: Implement actual sign-in logic
+    }
+
+    /**
+     * Update the display name field on the screen
+     */
+    public fun updateDisplayName(value: String) {
+        val currentScreenState = _screenState.value
+        if (currentScreenState is AuthScreenState.SignUp) {
+            _screenState.value = currentScreenState.copy(displayName = value)
+        }
+    }
+
+    public fun updateEmail(value: String) {
+        val currentFormData = _screenState.value
+        if (currentFormData is AuthScreenState.SignUp) {
+            _screenState.value = currentFormData.copy(email = value)
+        }
+        if (currentFormData is AuthScreenState.SignIn) {
+            _screenState.value = currentFormData.copy(email = value)
+        }
+    }
+
+    public fun updatePassword(value: String) {
+        val currentFormData = _screenState.value
+        if (currentFormData is AuthScreenState.SignUp) {
+            _screenState.value = currentFormData.copy(password = value)
+        }
+        if (currentFormData is AuthScreenState.SignIn) {
+            _screenState.value = currentFormData.copy(password = value)
+        }
     }
 }
 
