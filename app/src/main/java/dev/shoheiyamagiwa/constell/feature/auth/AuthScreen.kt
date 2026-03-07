@@ -64,20 +64,20 @@ import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewModelFactory)) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    val currentDisplayName = when (screenState) {
-        is AuthScreenState.SignUp -> (screenState as AuthScreenState.SignUp).displayName
+    val currentDisplayName = when (val state = screenState) {
+        is AuthScreenState.SignUp -> state.displayName
         else -> ""
     }
 
-    val currentEmail = when (screenState) {
-        is AuthScreenState.SignUp -> (screenState as AuthScreenState.SignUp).email
-        is AuthScreenState.SignIn -> (screenState as AuthScreenState.SignIn).email
+    val currentEmail = when (val state = screenState) {
+        is AuthScreenState.SignUp -> state.email
+        is AuthScreenState.SignIn -> state.email
         else -> ""
     }
 
-    val currentPassword = when (screenState) {
-        is AuthScreenState.SignUp -> (screenState as AuthScreenState.SignUp).password
-        is AuthScreenState.SignIn -> (screenState as AuthScreenState.SignIn).password
+    val currentPassword = when (val state = screenState) {
+        is AuthScreenState.SignUp -> state.password
+        is AuthScreenState.SignIn -> state.password
         else -> ""
     }
 
@@ -101,6 +101,7 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
         viewModel.validateSession()
     }
 
+    // TODO: Getting UI texts from string resources
     Background(alignment = Alignment.Center) {
         when (screenState) {
             AuthScreenState.Loading -> {
@@ -192,7 +193,9 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
                         Button(onClick = { onSubmit() }, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
                             Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600)), shape = RoundedCornerShape(size = 12.dp)), contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text(text = if (screenState is AuthScreenState.SignIn) "Sign In" else "Create Account", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
+                                    val text = if (screenState is AuthScreenState.SignIn) "Sign In" else "Create Account"
+
+                                    Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
                                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
                                 }
                             }
