@@ -30,6 +30,11 @@
             android:name=".feature.walkthrough.WalkthroughActivity"
             android:exported="true"
             android:theme="@style/Theme.Constell" />
+
+        <activity
+            android:name=".feature.auth.AuthActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Constell" />
     </application>
 
 </manifest>

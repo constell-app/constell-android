@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.shoheiyamagiwa.constell.R
+import dev.shoheiyamagiwa.constell.composable.AppLogo
 import dev.shoheiyamagiwa.constell.feature.walkthrough.ui.WalkthroughStep
 import dev.shoheiyamagiwa.constell.ui.theme.Blue600
 import dev.shoheiyamagiwa.constell.ui.theme.Purple600
@@ -36,9 +37,7 @@ import dev.shoheiyamagiwa.constell.ui.theme.Slate400
 public fun WalkthroughContent(step: WalkthroughStep, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         if (step.showLogo) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp).clip(shape = RoundedCornerShape(size = 12.dp)).background(Brush.linearGradient(colors = listOf(Blue600, Purple600))).padding(all = 8.dp)) {
-                Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
-            }
+            AppLogo()
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = stringResource(id = R.string.app_name), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
         } else {

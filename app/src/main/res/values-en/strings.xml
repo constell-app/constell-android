@@ -11,4 +11,6 @@
     <string name="walkthrough_desc_content_feature2">Just save it, and AI grasps the meaning.\\nIt automatically links related knowledge together.</string>
     <string name="walkthrough_heading_content_discover">Your personal \"Constellation\"</string>
     <string name="walkthrough_desc_content_discover">Discover new ideas from\\nunexpected intersections of knowledge.</string>
+    <string name="auth_text_signup_title">Welcome to Constell</string>
+    <string name="auth_text_signup_subtitle">Your AI Second Brain</string>
 </resources>
