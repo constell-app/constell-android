@@ -109,7 +109,7 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
             }
 
             else -> {
-                Column(modifier = Modifier.fillMaxSize().systemBarsPadding().navigationBarsPadding().padding(horizontal = 24.dp, vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(modifier = Modifier.fillMaxSize().systemBarsPadding().navigationBarsPadding().padding(horizontal = 24.dp, vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                     Spacer(modifier = Modifier.height(48.dp))
 
                     AuthHeader(
@@ -201,6 +201,8 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
         }
