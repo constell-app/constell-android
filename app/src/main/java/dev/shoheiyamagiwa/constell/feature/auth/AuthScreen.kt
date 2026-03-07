@@ -86,7 +86,7 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
     }
 
     fun onEmailChanged(value: String) {
-        viewModel.updateEmail(value);
+        viewModel.updateEmail(value)
     }
 
     fun onPasswordChanged(value: String) {
