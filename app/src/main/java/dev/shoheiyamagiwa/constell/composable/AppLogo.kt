@@ -21,7 +21,7 @@ import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 
 @Preview(showBackground = true, backgroundColor = 0xFF202020)
 @Composable
-fun AppLogo(modifier: Modifier = Modifier) {
+public fun AppLogo(modifier: Modifier = Modifier) {
     Box(contentAlignment = Alignment.Center, modifier = modifier.size(48.dp).clip(shape = RoundedCornerShape(size = 12.dp)).background(Brush.linearGradient(colors = listOf(Blue600, Purple600))).padding(all = 8.dp)) {
         Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(32.dp))
     }
