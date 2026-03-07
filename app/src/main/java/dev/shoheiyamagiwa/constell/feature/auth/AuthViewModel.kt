@@ -42,7 +42,7 @@ public class AuthViewModel : ViewModel() {
             }
 
             is AuthScreenState.SignIn -> {
-                _screenState.value = AuthScreenState.SignIn(currentState.email, currentState.password)
+                _screenState.value = AuthScreenState.SignUp(email = currentState.email, password = currentState.password)
             }
 
             is AuthScreenState.SignUp -> {
@@ -65,7 +65,7 @@ public class AuthViewModel : ViewModel() {
             }
 
             is AuthScreenState.SignUp -> {
-                _screenState.value = AuthScreenState.SignIn(currentState.email, currentState.password)
+                _screenState.value = AuthScreenState.SignIn(email = currentState.email, password = currentState.password)
             }
         }
     }
