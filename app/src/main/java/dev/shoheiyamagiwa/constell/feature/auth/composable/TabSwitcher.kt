@@ -35,6 +35,7 @@ import dev.shoheiyamagiwa.constell.ui.theme.Slate100
 import dev.shoheiyamagiwa.constell.ui.theme.Slate400
 import dev.shoheiyamagiwa.constell.ui.theme.Slate800
 
+// TODO: This composable should be refactored to make it on the "compose" way
 @Composable
 public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Modifier, onChangeToSignIn: () -> Unit, onChangeToSignUp: () -> Unit) {
     val isSignIn = authScreenState is AuthScreenState.SignIn
