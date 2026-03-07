@@ -167,7 +167,7 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Password
-                        var isValueMasked by remember { mutableStateOf(value = false) }
+                        var isValueMasked by remember { mutableStateOf(value = true) }
                         CustomTextField(
                             value = currentPassword,
                             onValueChange = { onPasswordChanged(value = it) },
@@ -192,7 +192,7 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        // FIXME: I have to fix that the submit button is fully rounded
+                        // FIXME: I have to fix the submit button not to be fully rounded
                         Button(onClick = { onSubmit() }, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
                             Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600)), shape = RoundedCornerShape(size = 12.dp)), contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
