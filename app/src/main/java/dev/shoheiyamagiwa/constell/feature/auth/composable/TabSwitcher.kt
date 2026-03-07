@@ -26,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
@@ -49,7 +50,8 @@ public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Mo
         is AuthScreenState.SignUp -> 1
     }
     var composableSize by remember { mutableStateOf(value = IntSize.Zero) }
-    val margin = 16.dp.value
+    val density = LocalDensity.current
+    val margin = with(receiver = density) { 4.dp.toPx() }
     val tabWidth = (composableSize.width - margin * 4.0F) / 2.0F
     val tabHeight = composableSize.height - margin * 2.0F
     val tabRadius = tabHeight / 2.0F
@@ -61,7 +63,10 @@ public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Mo
         composableSize = size
     }.drawWithContent {
         drawContent()
-        drawRoundRect(color = Slate100, alpha = 0.05F, topLeft = animatedTabOffset, size = tabSize, cornerRadius = CornerRadius(x = tabRadius, y = tabRadius))
+
+        if (tabWidth > 0.0F && tabHeight > 0.0F) {
+            drawRoundRect(color = Slate100, alpha = 0.05F, topLeft = animatedTabOffset, size = tabSize, cornerRadius = CornerRadius(x = tabRadius, y = tabRadius))
+        }
     }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
             TabSwitch(text = "Sign In", color = textColor(condition = isSignIn), onClick = onChangeToSignIn, modifier = Modifier.weight(0.5F))
