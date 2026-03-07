@@ -80,7 +80,7 @@ public class AuthViewModel : ViewModel() {
                 // TODO: Implement sign in functionality
             }
 
-            else -> throw IllegalStateException("Invalid screen state: $screenState")
+            else -> throw IllegalStateException("Invalid screen state: ${_screenState.value}")
         }
     }
 
