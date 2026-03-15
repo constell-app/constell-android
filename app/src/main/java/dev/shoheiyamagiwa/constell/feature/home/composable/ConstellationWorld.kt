@@ -28,8 +28,8 @@ fun ConstellationWorld(
     satelliteNodeRadius: Dp = 42.dp,
     nodeGap: Dp = 150.dp,
     edgeWidth: Dp = 2.dp,
-    onCenterNodeClick: () -> Unit,
-    onSatelliteNodeClick: (nodeId: Int) -> Unit,
+    onMainNodeClicked: () -> Unit,
+    onSatelliteNodeClicked: (nodeId: Int) -> Unit,
     isFocusing: Boolean = false
 ) {
     Box(
@@ -49,7 +49,7 @@ fun ConstellationWorld(
                         title = centerNodeTitle,
                         size = centerNodeRadius * 2,
                         isFocusing = isFocusing,
-                        onClick = onCenterNodeClick
+                        onClick = onMainNodeClicked
                     )
                 }
                 satelliteNodeTitles.forEachIndexed { index, title ->
@@ -58,7 +58,7 @@ fun ConstellationWorld(
                             title = title,
                             size = satelliteNodeRadius * 2,
                             onClick = {
-                                onSatelliteNodeClick(index)
+                                onSatelliteNodeClicked(index)
                             }
                         )
                     }

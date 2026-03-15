@@ -39,7 +39,7 @@ class HomeActivity : ComponentActivity() {
                             nodeGap = 144.dp,
                             edgeWidth = 2.dp,
                             centerNodeTitle = "Next.js",
-                            onCenterNodeClick = {
+                            onMainNodeClicked = {
                                 isFocusing = !isFocusing
                             },
                             satelliteNodeTitles = listOf(
@@ -50,7 +50,7 @@ class HomeActivity : ComponentActivity() {
                                 "Tailwind CSS",
                                 "Image Optimization",
                             ),
-                            onSatelliteNodeClick = { nodeId ->
+                            onSatelliteNodeClicked = { nodeId ->
 
                             },
                             isFocusing = isFocusing
