@@ -47,7 +47,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.composable.AppLogo
 import dev.shoheiyamagiwa.constell.composable.Background
@@ -59,8 +58,10 @@ import dev.shoheiyamagiwa.constell.ui.theme.Blue600
 import dev.shoheiyamagiwa.constell.ui.theme.Purple500
 import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 
+import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
-public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewModelFactory)) {
+public fun AuthScreen(viewModel: AuthViewModel = koinViewModel()) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     val currentDisplayName = when (val state = screenState) {

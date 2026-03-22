@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import dev.shoheiyamagiwa.constell.feature.auth.data.AuthRepository
+import dev.shoheiyamagiwa.constell.feature.auth.data.WithEmail
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +17,7 @@ public sealed class AuthScreenState {
     public data class SignIn(val email: String = "", val password: String = "") : AuthScreenState()
 }
 
-public class AuthViewModel : ViewModel() {
+public class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _screenState = MutableStateFlow<AuthScreenState>(value = AuthScreenState.Loading)
     public val screenState = _screenState.asStateFlow()
 
@@ -71,13 +73,37 @@ public class AuthViewModel : ViewModel() {
     }
 
     public fun submit() {
-        when (_screenState.value) {
+        when (val state = _screenState.value) {
             is AuthScreenState.SignUp -> {
-                // TODO: Implement sign up functionality
+                viewModelScope.launch {
+                    try {
+                        if (state.password != state.confirmPassword) {
+                            throw Exception("Passwords do not match")
+                        }
+
+                        if (authRepository !is WithEmail) {
+                            throw Exception("Email authentication is not supported")
+                        }
+
+                        authRepository.signUpWithEmail(state.email, state.password)
+                    } catch (e: Exception) {
+                        // TODO: Handle error
+                    }
+                }
             }
 
             is AuthScreenState.SignIn -> {
-                // TODO: Implement sign in functionality
+                viewModelScope.launch {
+                    try {
+                        if (authRepository !is WithEmail) {
+                            throw Exception("Email authentication is not supported")
+                        }
+
+                        authRepository.signInWithEmail(state.email, state.password)
+                    } catch (e: Exception) {
+                        // TODO: Handle error
+                    }
+                }
             }
 
             else -> throw IllegalStateException("Invalid screen state: ${_screenState.value}")
@@ -119,11 +145,5 @@ public class AuthViewModel : ViewModel() {
         if (currentState is AuthScreenState.SignUp) {
             _screenState.value = currentState.copy(confirmPassword = value)
         }
-    }
-}
-
-public val authViewModelFactory = viewModelFactory {
-    initializer {
-        AuthViewModel()
     }
 }
