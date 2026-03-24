@@ -11,6 +11,14 @@ public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) 
         supabaseClient.auth.signOut()
     }
 
+    override suspend fun isAuthenticated(): Boolean {
+        return supabaseClient.auth.currentSessionOrNull() != null
+    }
+
+    override suspend fun refreshSession() {
+        supabaseClient.auth.refreshCurrentSession()
+    }
+
     override suspend fun signUpWithEmail(email: String, password: String) {
         supabaseClient.auth.signUpWith(provider = Email, config = { // TODO: redirect url
             this.email = email

@@ -28,9 +28,13 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
         viewModelScope.launch {
             _screenState.value = AuthScreenState.Loading
 
-            delay(timeMillis = 1000L)  // TODO: Implement actual session restoring logic
-
-            _screenState.value = AuthScreenState.SignIn(email = "", password = "") // For now, just navigate to the sign-in screen
+            if (authRepository.isAuthenticated()) {
+                authRepository.refreshSession()
+                // TODO: Implement screen transition
+                return@launch
+            } else {
+                _screenState.value = AuthScreenState.SignIn(email = "", password = "")
+            }
         }
     }
 
