@@ -42,7 +42,7 @@ private fun NavigationDeclaration(isLoggedIn: Boolean, isFirstLaunch: Boolean) {
             HomeScreen()
         }
         composable<Walkthrough> {
-            WalkthroughScreen(onSkip = { }, onFinish = { })
+            WalkthroughScreen(onSkip = { TODO() }, onFinish = { TODO() })
         }
         composable<Auth> {
             AuthScreen()
