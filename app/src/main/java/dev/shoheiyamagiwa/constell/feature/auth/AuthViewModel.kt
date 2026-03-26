@@ -70,14 +70,16 @@ public class AuthViewModel : ViewModel() {
         }
     }
 
-    public fun submit() {
+    public fun submit(onSuccess: () -> Unit = {}) {
         when (_screenState.value) {
             is AuthScreenState.SignUp -> {
                 // TODO: Implement sign up functionality
+                onSuccess()
             }
 
             is AuthScreenState.SignIn -> {
                 // TODO: Implement sign in functionality
+                onSuccess()
             }
 
             else -> throw IllegalStateException("Invalid screen state: ${_screenState.value}")
