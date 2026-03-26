@@ -1,6 +1,7 @@
 package dev.shoheiyamagiwa.constell
 
 import android.app.Application
+import dev.shoheiyamagiwa.constell.di.appModule
 import dev.shoheiyamagiwa.constell.di.networkModule
 import dev.shoheiyamagiwa.constell.di.supabase
 import org.koin.android.ext.koin.androidContext
@@ -15,7 +16,7 @@ class ConstellApplication : Application() {
             androidLogger()
             androidContext(this@ConstellApplication)
 
-            modules(networkModule, supabase)
+            modules(appModule, networkModule, supabase)
         }
     }
 }
