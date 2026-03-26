@@ -2,7 +2,6 @@ package dev.shoheiyamagiwa.constell.feature.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.shoheiyamagiwa.constell.feature.home.composable.ConstellationWorld
-import dev.shoheiyamagiwa.constell.ui.theme.ConstellTheme
 
 @Composable
 public fun HomeScreen() {
@@ -33,8 +31,8 @@ public fun HomeScreen() {
                 "Tailwind CSS",
                 "Image Optimization",
             ),
-            onSatelliteNodeClick = { nodeId ->
-
+            onSatelliteNodeClick = { _ ->
+                // TODO: Handle satellite node click, e.g., navigate to a detail screen
             },
             isFocusing = isFocusing
         )
