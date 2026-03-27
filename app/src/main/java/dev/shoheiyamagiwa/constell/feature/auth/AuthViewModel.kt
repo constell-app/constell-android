@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.shoheiyamagiwa.constell.feature.auth.data.AuthRepository
 import dev.shoheiyamagiwa.constell.feature.auth.data.WithEmail
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 public sealed class AuthUiState {
@@ -25,8 +25,8 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
     private val _uiState = MutableStateFlow<AuthUiState>(value = AuthUiState.Loading)
     public val uiState = _uiState.asStateFlow()
 
-    private val _uiEvent = MutableSharedFlow<AuthUiEvent>()
-    public val uiEvent = _uiEvent.asSharedFlow()
+    private val _uiEventChannel = Channel<AuthUiEvent>()
+    public val uiEvent = _uiEventChannel.receiveAsFlow()
 
     /**
      * Validate a login session to restore the previous user data if possible
@@ -38,7 +38,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
             if (authRepository.isAuthenticated()) {
                 authRepository.refreshSession()
 
-                _uiEvent.emit(value = AuthUiEvent.NavigateToHome)
+                _uiEventChannel.send(element = AuthUiEvent.NavigateToHome)
                 return@launch
             } else {
                 _uiState.value = AuthUiState.SignIn(email = "", password = "")
@@ -98,8 +98,9 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                         }
 
                         authRepository.signUpWithEmail(state.email, state.password)
+                        // TODO: Set displayName property on the DB
 
-                        _uiEvent.emit(value = AuthUiEvent.NavigateToConfirmEmail(state.email))
+                        _uiEventChannel.send(element = AuthUiEvent.NavigateToConfirmEmail(state.email))
                     } catch (e: Exception) {
                         // TODO: Handle error
                     }
@@ -115,7 +116,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
                         authRepository.signInWithEmail(state.email, state.password)
 
-                        _uiEvent.emit(value = AuthUiEvent.NavigateToHome)
+                        _uiEventChannel.send(element = AuthUiEvent.NavigateToHome)
                     } catch (e: Exception) {
                         // TODO: Handle error
                     }
