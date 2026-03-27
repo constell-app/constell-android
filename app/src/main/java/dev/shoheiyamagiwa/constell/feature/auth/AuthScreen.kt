@@ -66,7 +66,7 @@ public fun AuthScreen(
     onNavigateToConfirmEmail: (String) -> Unit = {},
     onNavigateToHome: () -> Unit = {},
 ) {
-    val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val screenState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val currentDisplayName = when (val state = screenState) {
         is AuthUiState.SignUp -> state.displayName

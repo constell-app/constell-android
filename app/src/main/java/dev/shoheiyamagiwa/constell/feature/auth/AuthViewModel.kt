@@ -22,8 +22,8 @@ public sealed interface AuthUiEvent {
 }
 
 public class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
-    private val _screenState = MutableStateFlow<AuthUiState>(value = AuthUiState.Loading)
-    public val screenState = _screenState.asStateFlow()
+    private val _uiState = MutableStateFlow<AuthUiState>(value = AuthUiState.Loading)
+    public val uiState = _uiState.asStateFlow()
 
     private val _uiEvent = MutableSharedFlow<AuthUiEvent>()
     public val uiEvent = _uiEvent.asSharedFlow()
@@ -33,7 +33,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
      */
     public fun validateSession() {
         viewModelScope.launch {
-            _screenState.value = AuthUiState.Loading
+            _uiState.value = AuthUiState.Loading
 
             if (authRepository.isAuthenticated()) {
                 authRepository.refreshSession()
@@ -41,7 +41,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 _uiEvent.emit(value = AuthUiEvent.NavigateToHome)
                 return@launch
             } else {
-                _screenState.value = AuthUiState.SignIn(email = "", password = "")
+                _uiState.value = AuthUiState.SignIn(email = "", password = "")
             }
         }
     }
@@ -50,13 +50,13 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
      * Update the screen to the sign-up screen
      */
     public fun updateToSignUp() {
-        when (val currentState = _screenState.value) {
+        when (val currentState = _uiState.value) {
             is AuthUiState.Loading -> {
                 return
             }
 
             is AuthUiState.SignIn -> {
-                _screenState.value = AuthUiState.SignUp(email = currentState.email, password = currentState.password)
+                _uiState.value = AuthUiState.SignUp(email = currentState.email, password = currentState.password)
             }
 
             is AuthUiState.SignUp -> {
@@ -69,7 +69,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
      * Update the screen to the sign-in screen
      */
     public fun updateToSignIn() {
-        when (val currentState = _screenState.value) {
+        when (val currentState = _uiState.value) {
             is AuthUiState.Loading -> {
                 return
             }
@@ -79,13 +79,13 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
             }
 
             is AuthUiState.SignUp -> {
-                _screenState.value = AuthUiState.SignIn(email = currentState.email, password = currentState.password)
+                _uiState.value = AuthUiState.SignIn(email = currentState.email, password = currentState.password)
             }
         }
     }
 
     public fun submit() {
-        when (val state = _screenState.value) {
+        when (val state = _uiState.value) {
             is AuthUiState.SignUp -> {
                 viewModelScope.launch {
                     try {
@@ -122,44 +122,41 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 }
             }
 
-            else -> throw IllegalStateException("Invalid screen state: ${_screenState.value}")
+            else -> throw IllegalStateException("Invalid screen state: ${_uiState.value}")
         }
     }
 
-    /**
-     * Update the display name field on the screen
-     */
     public fun updateDisplayName(value: String) {
-        val currentState = _screenState.value
+        val currentState = _uiState.value
         if (currentState is AuthUiState.SignUp) {
-            _screenState.value = currentState.copy(displayName = value)
+            _uiState.value = currentState.copy(displayName = value)
         }
     }
 
     public fun updateEmail(value: String) {
-        val currentState = _screenState.value
+        val currentState = _uiState.value
         if (currentState is AuthUiState.SignUp) {
-            _screenState.value = currentState.copy(email = value)
+            _uiState.value = currentState.copy(email = value)
         }
         if (currentState is AuthUiState.SignIn) {
-            _screenState.value = currentState.copy(email = value)
+            _uiState.value = currentState.copy(email = value)
         }
     }
 
     public fun updatePassword(value: String) {
-        val currentState = _screenState.value
+        val currentState = _uiState.value
         if (currentState is AuthUiState.SignUp) {
-            _screenState.value = currentState.copy(password = value)
+            _uiState.value = currentState.copy(password = value)
         }
         if (currentState is AuthUiState.SignIn) {
-            _screenState.value = currentState.copy(password = value)
+            _uiState.value = currentState.copy(password = value)
         }
     }
 
     public fun updateConfirmPassword(value: String) {
-        val currentState = _screenState.value
+        val currentState = _uiState.value
         if (currentState is AuthUiState.SignUp) {
-            _screenState.value = currentState.copy(confirmPassword = value)
+            _uiState.value = currentState.copy(confirmPassword = value)
         }
     }
 }
