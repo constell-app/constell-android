@@ -76,7 +76,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
         }
     }
 
-    public fun submit() {
+    public fun submit(onSuccess: () -> Unit = {}) {
         when (val state = _screenState.value) {
             is AuthScreenState.SignUp -> {
                 viewModelScope.launch {
@@ -94,6 +94,8 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                         // TODO: Handle error
                     }
                 }
+
+                onSuccess()
             }
 
             is AuthScreenState.SignIn -> {
@@ -108,6 +110,8 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                         // TODO: Handle error
                     }
                 }
+
+                onSuccess()
             }
 
             else -> throw IllegalStateException("Invalid screen state: ${_screenState.value}")

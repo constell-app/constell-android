@@ -87,4 +87,11 @@ dependencies {
     implementation(libs.postgrest.kt)
     implementation(libs.auth.kt)
     implementation(libs.realtime.kt)
+
+    // Data Store
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
+
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
 }

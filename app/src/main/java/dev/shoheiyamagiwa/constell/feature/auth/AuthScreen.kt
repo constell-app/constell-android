@@ -61,7 +61,10 @@ import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-public fun AuthScreen(viewModel: AuthViewModel = koinViewModel()) {
+public fun AuthScreen(
+    viewModel: AuthViewModel = koinViewModel(),
+    onLoginSuccess: () -> Unit = {}
+) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     val currentDisplayName = when (val state = screenState) {
@@ -103,7 +106,7 @@ public fun AuthScreen(viewModel: AuthViewModel = koinViewModel()) {
     }
 
     fun onSubmit() {
-        viewModel.submit()
+        viewModel.submit(onSuccess = onLoginSuccess)
     }
 
     LaunchedEffect(key1 = Unit) {
