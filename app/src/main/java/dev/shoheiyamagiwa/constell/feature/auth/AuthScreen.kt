@@ -69,24 +69,24 @@ public fun AuthScreen(
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     val currentDisplayName = when (val state = screenState) {
-        is AuthScreenState.SignUp -> state.displayName
+        is AuthUiState.SignUp -> state.displayName
         else -> ""
     }
 
     val currentEmail = when (val state = screenState) {
-        is AuthScreenState.SignUp -> state.email
-        is AuthScreenState.SignIn -> state.email
+        is AuthUiState.SignUp -> state.email
+        is AuthUiState.SignIn -> state.email
         else -> ""
     }
 
     val currentPassword = when (val state = screenState) {
-        is AuthScreenState.SignUp -> state.password
-        is AuthScreenState.SignIn -> state.password
+        is AuthUiState.SignUp -> state.password
+        is AuthUiState.SignIn -> state.password
         else -> ""
     }
 
     val currentConfirmPassword = when (val state = screenState) {
-        is AuthScreenState.SignUp -> state.confirmPassword
+        is AuthUiState.SignUp -> state.confirmPassword
         else -> ""
     }
 
@@ -111,7 +111,7 @@ public fun AuthScreen(
     // TODO: Getting UI texts from string resources
     Background(alignment = Alignment.Center) {
         when (screenState) {
-            AuthScreenState.Loading -> {
+            AuthUiState.Loading -> {
                 CircularProgressIndicator()
             }
 
@@ -147,7 +147,7 @@ public fun AuthScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     TabSwitcher(
-                        modifier = Modifier.fillMaxWidth(), authScreenState = screenState,
+                        modifier = Modifier.fillMaxWidth(), authUiState = screenState,
                         onChangeToSignIn = {
                             viewModel.updateToSignIn()
                         }, onChangeToSignUp = {
@@ -159,7 +159,7 @@ public fun AuthScreen(
 
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // Display Name
-                        AnimatedVisibility(visible = screenState is AuthScreenState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
+                        AnimatedVisibility(visible = screenState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
                             CustomTextField(value = currentDisplayName, onValueChange = { viewModel.updateDisplayName(value = it) }, placeholder = "Display Name", leadingIcon = Icons.Default.Person)
                         }
 
@@ -186,7 +186,7 @@ public fun AuthScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Confirm Password
-                        AnimatedVisibility(visible = screenState is AuthScreenState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
+                        AnimatedVisibility(visible = screenState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
                             var isValueMasked by remember { mutableStateOf(value = true) }
                             CustomTextField(
                                 value = currentConfirmPassword,
@@ -203,7 +203,7 @@ public fun AuthScreen(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         // FIXME: I have to remove the padding of this block of composables
-                        AnimatedVisibility(visible = screenState is AuthScreenState.SignIn) {
+                        AnimatedVisibility(visible = screenState is AuthUiState.SignIn) {
                             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                                 TextButton(contentPadding = PaddingValues(all = 0.dp), onClick = { /* TODO */ }) {
                                     Text("Forgot Password?", color = Blue400, fontSize = 12.sp, fontWeight = FontWeight.Medium)
@@ -216,7 +216,7 @@ public fun AuthScreen(
                         Button(onClick = { viewModel.submit() }, shape = RoundedCornerShape(size = 12.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
                             Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    val text = if (screenState is AuthScreenState.SignIn) "Sign In" else "Create Account"
+                                    val text = if (screenState is AuthUiState.SignIn) "Sign In" else "Create Account"
 
                                     Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
                                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))

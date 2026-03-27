@@ -31,23 +31,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import dev.shoheiyamagiwa.constell.feature.auth.AuthScreenState
+import dev.shoheiyamagiwa.constell.feature.auth.AuthUiState
 import dev.shoheiyamagiwa.constell.ui.theme.Slate100
 import dev.shoheiyamagiwa.constell.ui.theme.Slate400
 import dev.shoheiyamagiwa.constell.ui.theme.Slate800
 
 // TODO: Refactor this composable to be more idiomatic Compose
 @Composable
-public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Modifier, onChangeToSignIn: () -> Unit, onChangeToSignUp: () -> Unit) {
-    val isSignIn = authScreenState is AuthScreenState.SignIn
-    val isSignUp = authScreenState is AuthScreenState.SignUp
+public fun TabSwitcher(authUiState: AuthUiState, modifier: Modifier = Modifier, onChangeToSignIn: () -> Unit, onChangeToSignUp: () -> Unit) {
+    val isSignIn = authUiState is AuthUiState.SignIn
+    val isSignUp = authUiState is AuthUiState.SignUp
 
     fun textColor(condition: Boolean) = if (condition) Color.White else Slate400.copy(alpha = 0.5F)
 
-    val currentTabIndex = when (authScreenState) {
-        is AuthScreenState.Loading -> 0 // Fail-safe
-        is AuthScreenState.SignIn -> 0
-        is AuthScreenState.SignUp -> 1
+    val currentTabIndex = when (authUiState) {
+        is AuthUiState.Loading -> 0 // Fail-safe
+        is AuthUiState.SignIn -> 0
+        is AuthUiState.SignUp -> 1
     }
     var composableSize by remember { mutableStateOf(value = IntSize.Zero) }
     val density = LocalDensity.current
@@ -78,13 +78,13 @@ public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Mo
 @Preview
 @Composable
 private fun TabSwitcherPreview_SignIn() {
-    TabSwitcher(authScreenState = AuthScreenState.SignIn(), onChangeToSignIn = {}, onChangeToSignUp = {})
+    TabSwitcher(authUiState = AuthUiState.SignIn(), onChangeToSignIn = {}, onChangeToSignUp = {})
 }
 
 @Preview
 @Composable
 private fun TabSwitcherPreview_SignUp() {
-    TabSwitcher(authScreenState = AuthScreenState.SignUp(), onChangeToSignIn = {}, onChangeToSignUp = {})
+    TabSwitcher(authUiState = AuthUiState.SignUp(), onChangeToSignIn = {}, onChangeToSignUp = {})
 }
 
 @Composable

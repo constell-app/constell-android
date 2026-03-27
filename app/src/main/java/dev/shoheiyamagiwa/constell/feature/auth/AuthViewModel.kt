@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-public sealed class AuthScreenState {
-    public object Loading : AuthScreenState()
-    public data class SignUp(val displayName: String = "", val email: String = "", val password: String = "", val confirmPassword: String = "") : AuthScreenState()
-    public data class SignIn(val email: String = "", val password: String = "") : AuthScreenState()
+public sealed class AuthUiState {
+    public object Loading : AuthUiState()
+    public data class SignUp(val displayName: String = "", val email: String = "", val password: String = "", val confirmPassword: String = "") : AuthUiState()
+    public data class SignIn(val email: String = "", val password: String = "") : AuthUiState()
 }
 
 public sealed interface AuthUiEvent {
@@ -22,7 +22,7 @@ public sealed interface AuthUiEvent {
 }
 
 public class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
-    private val _screenState = MutableStateFlow<AuthScreenState>(value = AuthScreenState.Loading)
+    private val _screenState = MutableStateFlow<AuthUiState>(value = AuthUiState.Loading)
     public val screenState = _screenState.asStateFlow()
 
     private val _uiEvent = MutableSharedFlow<AuthUiEvent>()
@@ -33,7 +33,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
      */
     public fun validateSession() {
         viewModelScope.launch {
-            _screenState.value = AuthScreenState.Loading
+            _screenState.value = AuthUiState.Loading
 
             if (authRepository.isAuthenticated()) {
                 authRepository.refreshSession()
@@ -41,7 +41,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 _uiEvent.emit(value = AuthUiEvent.NavigateToHome)
                 return@launch
             } else {
-                _screenState.value = AuthScreenState.SignIn(email = "", password = "")
+                _screenState.value = AuthUiState.SignIn(email = "", password = "")
             }
         }
     }
@@ -51,15 +51,15 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
      */
     public fun updateToSignUp() {
         when (val currentState = _screenState.value) {
-            is AuthScreenState.Loading -> {
+            is AuthUiState.Loading -> {
                 return
             }
 
-            is AuthScreenState.SignIn -> {
-                _screenState.value = AuthScreenState.SignUp(email = currentState.email, password = currentState.password)
+            is AuthUiState.SignIn -> {
+                _screenState.value = AuthUiState.SignUp(email = currentState.email, password = currentState.password)
             }
 
-            is AuthScreenState.SignUp -> {
+            is AuthUiState.SignUp -> {
                 return
             }
         }
@@ -70,23 +70,23 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
      */
     public fun updateToSignIn() {
         when (val currentState = _screenState.value) {
-            is AuthScreenState.Loading -> {
+            is AuthUiState.Loading -> {
                 return
             }
 
-            is AuthScreenState.SignIn -> {
+            is AuthUiState.SignIn -> {
                 return
             }
 
-            is AuthScreenState.SignUp -> {
-                _screenState.value = AuthScreenState.SignIn(email = currentState.email, password = currentState.password)
+            is AuthUiState.SignUp -> {
+                _screenState.value = AuthUiState.SignIn(email = currentState.email, password = currentState.password)
             }
         }
     }
 
     public fun submit() {
         when (val state = _screenState.value) {
-            is AuthScreenState.SignUp -> {
+            is AuthUiState.SignUp -> {
                 viewModelScope.launch {
                     try {
                         if (state.password != state.confirmPassword) {
@@ -106,7 +106,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 }
             }
 
-            is AuthScreenState.SignIn -> {
+            is AuthUiState.SignIn -> {
                 viewModelScope.launch {
                     try {
                         if (authRepository !is WithEmail) {
@@ -131,34 +131,34 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
      */
     public fun updateDisplayName(value: String) {
         val currentState = _screenState.value
-        if (currentState is AuthScreenState.SignUp) {
+        if (currentState is AuthUiState.SignUp) {
             _screenState.value = currentState.copy(displayName = value)
         }
     }
 
     public fun updateEmail(value: String) {
         val currentState = _screenState.value
-        if (currentState is AuthScreenState.SignUp) {
+        if (currentState is AuthUiState.SignUp) {
             _screenState.value = currentState.copy(email = value)
         }
-        if (currentState is AuthScreenState.SignIn) {
+        if (currentState is AuthUiState.SignIn) {
             _screenState.value = currentState.copy(email = value)
         }
     }
 
     public fun updatePassword(value: String) {
         val currentState = _screenState.value
-        if (currentState is AuthScreenState.SignUp) {
+        if (currentState is AuthUiState.SignUp) {
             _screenState.value = currentState.copy(password = value)
         }
-        if (currentState is AuthScreenState.SignIn) {
+        if (currentState is AuthUiState.SignIn) {
             _screenState.value = currentState.copy(password = value)
         }
     }
 
     public fun updateConfirmPassword(value: String) {
         val currentState = _screenState.value
-        if (currentState is AuthScreenState.SignUp) {
+        if (currentState is AuthUiState.SignUp) {
             _screenState.value = currentState.copy(confirmPassword = value)
         }
     }
