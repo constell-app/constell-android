@@ -90,26 +90,6 @@ public fun AuthScreen(
         else -> ""
     }
 
-    fun onDisplayNameChanged(value: String) {
-        viewModel.updateDisplayName(value)
-    }
-
-    fun onEmailChanged(value: String) {
-        viewModel.updateEmail(value)
-    }
-
-    fun onPasswordChanged(value: String) {
-        viewModel.updatePassword(value)
-    }
-
-    fun onConfirmPasswordChanged(value: String) {
-        viewModel.updateConfirmPassword(value)
-    }
-
-    fun onSubmit() {
-        viewModel.submit()
-    }
-
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -180,13 +160,13 @@ public fun AuthScreen(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // Display Name
                         AnimatedVisibility(visible = screenState is AuthScreenState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
-                            CustomTextField(value = currentDisplayName, onValueChange = { onDisplayNameChanged(value = it) }, placeholder = "Display Name", leadingIcon = Icons.Default.Person)
+                            CustomTextField(value = currentDisplayName, onValueChange = { viewModel.updateDisplayName(value = it) }, placeholder = "Display Name", leadingIcon = Icons.Default.Person)
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Email
-                        CustomTextField(value = currentEmail, onValueChange = { onEmailChanged(value = it) }, placeholder = "Email", leadingIcon = Icons.Default.Email, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
+                        CustomTextField(value = currentEmail, onValueChange = { viewModel.updateEmail(value = it) }, placeholder = "Email", leadingIcon = Icons.Default.Email, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -194,7 +174,7 @@ public fun AuthScreen(
                         var isValueMasked by remember { mutableStateOf(value = true) }
                         CustomTextField(
                             value = currentPassword,
-                            onValueChange = { onPasswordChanged(value = it) },
+                            onValueChange = { viewModel.updatePassword(value = it) },
                             placeholder = "Password",
                             leadingIcon = Icons.Default.Lock,
                             maskValue = true,
@@ -210,7 +190,7 @@ public fun AuthScreen(
                             var isValueMasked by remember { mutableStateOf(value = true) }
                             CustomTextField(
                                 value = currentConfirmPassword,
-                                onValueChange = { onConfirmPasswordChanged(value = it) },
+                                onValueChange = { viewModel.updateConfirmPassword(value = it) },
                                 placeholder = "Confirm Password",
                                 leadingIcon = Icons.Default.Lock,
                                 maskValue = true,
@@ -233,7 +213,7 @@ public fun AuthScreen(
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        Button(onClick = { onSubmit() }, shape = RoundedCornerShape(size = 12.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
+                        Button(onClick = { viewModel.submit() }, shape = RoundedCornerShape(size = 12.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
                             Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     val text = if (screenState is AuthScreenState.SignIn) "Sign In" else "Create Account"
