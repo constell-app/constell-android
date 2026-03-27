@@ -63,7 +63,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 public fun AuthScreen(
     viewModel: AuthViewModel = koinViewModel(),
-    onLoginSuccess: () -> Unit = {}
+    onNavigateToConfirmEmail: (String) -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
 ) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -106,7 +107,21 @@ public fun AuthScreen(
     }
 
     fun onSubmit() {
-        viewModel.submit(onSuccess = onLoginSuccess)
+        viewModel.submit()
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is AuthUiEvent.NavigateToConfirmEmail -> {
+                    onNavigateToConfirmEmail(event.email)
+                }
+
+                is AuthUiEvent.NavigateToHome -> {
+                    onNavigateToHome()
+                }
+            }
+        }
     }
 
     LaunchedEffect(key1 = Unit) {

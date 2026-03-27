@@ -2,12 +2,11 @@ package dev.shoheiyamagiwa.constell.feature.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.shoheiyamagiwa.constell.feature.auth.data.AuthRepository
 import dev.shoheiyamagiwa.constell.feature.auth.data.WithEmail
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -17,9 +16,17 @@ public sealed class AuthScreenState {
     public data class SignIn(val email: String = "", val password: String = "") : AuthScreenState()
 }
 
+public sealed interface AuthUiEvent {
+    public data object NavigateToHome : AuthUiEvent
+    public data class NavigateToConfirmEmail(val email: String) : AuthUiEvent
+}
+
 public class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _screenState = MutableStateFlow<AuthScreenState>(value = AuthScreenState.Loading)
     public val screenState = _screenState.asStateFlow()
+
+    private val _uiEvent = MutableSharedFlow<AuthUiEvent>()
+    public val uiEvent = _uiEvent.asSharedFlow()
 
     /**
      * Validate a login session to restore the previous user data if possible
@@ -30,7 +37,8 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
             if (authRepository.isAuthenticated()) {
                 authRepository.refreshSession()
-                // TODO: Implement screen transition
+
+                _uiEvent.emit(value = AuthUiEvent.NavigateToHome)
                 return@launch
             } else {
                 _screenState.value = AuthScreenState.SignIn(email = "", password = "")
@@ -76,7 +84,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
         }
     }
 
-    public fun submit(onSuccess: () -> Unit = {}) {
+    public fun submit() {
         when (val state = _screenState.value) {
             is AuthScreenState.SignUp -> {
                 viewModelScope.launch {
@@ -90,12 +98,12 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                         }
 
                         authRepository.signUpWithEmail(state.email, state.password)
+
+                        _uiEvent.emit(value = AuthUiEvent.NavigateToConfirmEmail(state.email))
                     } catch (e: Exception) {
                         // TODO: Handle error
                     }
                 }
-
-                onSuccess()
             }
 
             is AuthScreenState.SignIn -> {
@@ -106,12 +114,12 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                         }
 
                         authRepository.signInWithEmail(state.email, state.password)
+
+                        _uiEvent.emit(value = AuthUiEvent.NavigateToHome)
                     } catch (e: Exception) {
                         // TODO: Handle error
                     }
                 }
-
-                onSuccess()
             }
 
             else -> throw IllegalStateException("Invalid screen state: ${_screenState.value}")
