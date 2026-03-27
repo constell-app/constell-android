@@ -49,7 +49,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
     /**
      * Update the screen to the sign-up screen
      */
-    public fun updateToSignUp() {
+    public fun changeToSignUpUi() {
         when (val currentState = _uiState.value) {
             is AuthUiState.Loading -> {
                 return
@@ -68,7 +68,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
     /**
      * Update the screen to the sign-in screen
      */
-    public fun updateToSignIn() {
+    public fun changeToSignInUi() {
         when (val currentState = _uiState.value) {
             is AuthUiState.Loading -> {
                 return

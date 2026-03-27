@@ -149,9 +149,9 @@ public fun AuthScreen(
                     TabSwitcher(
                         modifier = Modifier.fillMaxWidth(), authUiState = screenState,
                         onChangeToSignIn = {
-                            viewModel.updateToSignIn()
+                            viewModel.changeToSignInUi()
                         }, onChangeToSignUp = {
-                            viewModel.updateToSignUp()
+                            viewModel.changeToSignUpUi()
                         }
                     )
 
