@@ -52,6 +52,7 @@ import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.composable.AppLogo
 import dev.shoheiyamagiwa.constell.composable.Background
 import dev.shoheiyamagiwa.constell.composable.CustomTextField
+import dev.shoheiyamagiwa.constell.composable.ErrorAlert
 import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthHeader
 import dev.shoheiyamagiwa.constell.feature.auth.composable.TabSwitcher
 import dev.shoheiyamagiwa.constell.ui.theme.Blue400
@@ -134,6 +135,20 @@ private fun AuthContent(
         else -> ""
     }
 
+    val errorMessages = when (uiState) {
+        is AuthUiState.SignUp -> listOfNotNull(
+            uiState.displayName.errorMessageResId,
+            uiState.email.errorMessageResId,
+            uiState.password.errorMessageResId,
+            uiState.confirmPassword.errorMessageResId
+        ).map { stringResource(id = it) }
+        is AuthUiState.SignIn -> listOfNotNull(
+            uiState.email.errorMessageResId,
+            uiState.password.errorMessageResId
+        ).map { stringResource(id = it) }
+        else -> emptyList()
+    }
+
     // TODO: Getting UI texts from string resources
     Background(alignment = Alignment.Center) {
         when (uiState) {
@@ -179,18 +194,49 @@ private fun AuthContent(
                         onChangeToSignUp = onTabChangeToSignUp
                     )
 
+                    AnimatedVisibility(
+                        visible = errorMessages.isNotEmpty(),
+                        enter = expandVertically(animationSpec = spring()),
+                        exit = shrinkVertically(animationSpec = spring())
+                    ) {
+                        Column {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            ErrorAlert(
+                                message = errorMessages.firstOrNull() ?: "",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // Display Name
                         AnimatedVisibility(visible = uiState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
-                            CustomTextField(value = currentDisplayName, onValueChange = onUpdateDisplayName, placeholder = stringResource(id = R.string.auth_label_display_name), leadingIcon = Icons.Default.Person)
+                            CustomTextField(
+                                value = currentDisplayName,
+                                onValueChange = onUpdateDisplayName,
+                                placeholder = stringResource(id = R.string.auth_label_display_name),
+                                leadingIcon = Icons.Default.Person,
+                                isError = (uiState as? AuthUiState.SignUp)?.displayName?.hasError() ?: false
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Email
-                        CustomTextField(value = currentEmail, onValueChange = onUpdateEmail, placeholder = stringResource(id = R.string.auth_label_email), leadingIcon = Icons.Default.Email, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
+                        CustomTextField(
+                            value = currentEmail,
+                            onValueChange = onUpdateEmail,
+                            placeholder = stringResource(id = R.string.auth_label_email),
+                            leadingIcon = Icons.Default.Email,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            isError = when (uiState) {
+                                is AuthUiState.SignUp -> uiState.email.hasError()
+                                is AuthUiState.SignIn -> uiState.email.hasError()
+                                else -> false
+                            }
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -204,7 +250,12 @@ private fun AuthContent(
                             maskValue = true,
                             isValueMasked = isValueMasked,
                             onMaskToggled = { isValueMasked = !isValueMasked },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            isError = when (uiState) {
+                                is AuthUiState.SignUp -> uiState.password.hasError()
+                                is AuthUiState.SignIn -> uiState.password.hasError()
+                                else -> false
+                            }
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -220,7 +271,8 @@ private fun AuthContent(
                                 maskValue = true,
                                 isValueMasked = isValueMasked,
                                 onMaskToggled = { isValueMasked = !isValueMasked },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                                isError = (uiState as? AuthUiState.SignUp)?.confirmPassword?.hasError() ?: false
                             )
                         }
 

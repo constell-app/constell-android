@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -56,20 +57,22 @@ public fun CustomTextField(
     leadingIcon: ImageVector,
     maskValue: Boolean = false,
     isValueMasked: Boolean = true,
+    isError: Boolean = false,
     onMaskToggled: () -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val glowAlpha by animateFloatAsState(targetValue = if (isFocused) 0.5F else 0.0F, label = "glow")
-    val borderColor by animateColorAsState(targetValue = if (isFocused) Blue500.copy(alpha = 0.5F) else Slate700, label = "border")
-    val iconColor by animateColorAsState(targetValue = if (isFocused) Blue400 else Slate500, label = "icon")
+    val glowColor = if (isError) Color.Red else Blue500
+    val glowAlpha by animateFloatAsState(targetValue = if (isFocused || isError) 0.5F else 0.0F, label = "glow")
+    val borderColor by animateColorAsState(targetValue = if (isError) Color.Red.copy(alpha = 0.8F) else if (isFocused) Blue500.copy(alpha = 0.5F) else Slate700, label = "border")
+    val iconColor by animateColorAsState(targetValue = if (isError) Color.Red.copy(alpha = 0.8F) else if (isFocused) Blue400 else Slate500, label = "icon")
 
     Box(modifier = modifier.fillMaxWidth().clip(shape = RoundedCornerShape(size = 12.dp)), contentAlignment = Alignment.Center) {
         // Background Glow Effect
         if (glowAlpha > 0f) {
-            Box(modifier = Modifier.matchParentSize().blur(radius = 16.dp).background(Brush.horizontalGradient(colors = listOf(Blue500, Purple500))).padding(all = 4.dp))
+            Box(modifier = Modifier.matchParentSize().blur(radius = 16.dp).background(Brush.horizontalGradient(colors = listOf(glowColor, Purple500))).padding(all = 4.dp))
         }
 
         // Actual TextField Container
