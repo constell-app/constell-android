@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -68,28 +69,6 @@ public fun AuthScreen(
 ) {
     val screenState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val currentDisplayName = when (val state = screenState) {
-        is AuthUiState.SignUp -> state.displayName
-        else -> ""
-    }
-
-    val currentEmail = when (val state = screenState) {
-        is AuthUiState.SignUp -> state.email
-        is AuthUiState.SignIn -> state.email
-        else -> ""
-    }
-
-    val currentPassword = when (val state = screenState) {
-        is AuthUiState.SignUp -> state.password
-        is AuthUiState.SignIn -> state.password
-        else -> ""
-    }
-
-    val currentConfirmPassword = when (val state = screenState) {
-        is AuthUiState.SignUp -> state.confirmPassword
-        else -> ""
-    }
-
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -110,9 +89,54 @@ public fun AuthScreen(
         viewModel.validateSession()
     }
 
+    AuthContent(
+        uiState = screenState,
+        onUpdateEmail = { viewModel.updateEmail(value = it) },
+        onUpdatePassword = { viewModel.updatePassword(value = it) },
+        onUpdateConfirmPassword = { viewModel.updateConfirmPassword(value = it) },
+        onUpdateDisplayName = { viewModel.updateDisplayName(value = it) },
+        onTabChangeToSignUp = { viewModel.changeToSignUpUi() },
+        onTabChangeToSignIn = { viewModel.changeToSignInUi() },
+        onSubmit = { viewModel.submit() }
+    )
+}
+
+@Composable
+private fun AuthContent(
+    uiState: AuthUiState,
+    onUpdateEmail: (String) -> Unit,
+    onUpdatePassword: (String) -> Unit,
+    onUpdateConfirmPassword: (String) -> Unit,
+    onUpdateDisplayName: (String) -> Unit,
+    onTabChangeToSignUp: () -> Unit,
+    onTabChangeToSignIn: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    val currentDisplayName = when (uiState) {
+        is AuthUiState.SignUp -> uiState.displayName
+        else -> ""
+    }
+
+    val currentEmail = when (uiState) {
+        is AuthUiState.SignUp -> uiState.email
+        is AuthUiState.SignIn -> uiState.email
+        else -> ""
+    }
+
+    val currentPassword = when (uiState) {
+        is AuthUiState.SignUp -> uiState.password
+        is AuthUiState.SignIn -> uiState.password
+        else -> ""
+    }
+
+    val currentConfirmPassword = when (uiState) {
+        is AuthUiState.SignUp -> uiState.confirmPassword
+        else -> ""
+    }
+
     // TODO: Getting UI texts from string resources
     Background(alignment = Alignment.Center) {
-        when (screenState) {
+        when (uiState) {
             AuthUiState.Loading -> {
                 CircularProgressIndicator()
             }
@@ -149,26 +173,24 @@ public fun AuthScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     TabSwitcher(
-                        modifier = Modifier.fillMaxWidth(), authUiState = screenState,
-                        onChangeToSignIn = {
-                            viewModel.changeToSignInUi()
-                        }, onChangeToSignUp = {
-                            viewModel.changeToSignUpUi()
-                        }
+                        modifier = Modifier.fillMaxWidth(),
+                        authUiState = uiState,
+                        onChangeToSignIn = onTabChangeToSignIn,
+                        onChangeToSignUp = onTabChangeToSignUp
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // Display Name
-                        AnimatedVisibility(visible = screenState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
-                            CustomTextField(value = currentDisplayName, onValueChange = { viewModel.updateDisplayName(value = it) }, placeholder = "Display Name", leadingIcon = Icons.Default.Person)
+                        AnimatedVisibility(visible = uiState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
+                            CustomTextField(value = currentDisplayName, onValueChange = onUpdateDisplayName, placeholder = "Display Name", leadingIcon = Icons.Default.Person)
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Email
-                        CustomTextField(value = currentEmail, onValueChange = { viewModel.updateEmail(value = it) }, placeholder = "Email", leadingIcon = Icons.Default.Email, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
+                        CustomTextField(value = currentEmail, onValueChange = onUpdateEmail, placeholder = "Email", leadingIcon = Icons.Default.Email, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -176,7 +198,7 @@ public fun AuthScreen(
                         var isValueMasked by remember { mutableStateOf(value = true) }
                         CustomTextField(
                             value = currentPassword,
-                            onValueChange = { viewModel.updatePassword(value = it) },
+                            onValueChange = onUpdatePassword,
                             placeholder = "Password",
                             leadingIcon = Icons.Default.Lock,
                             maskValue = true,
@@ -188,11 +210,11 @@ public fun AuthScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Confirm Password
-                        AnimatedVisibility(visible = screenState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
+                        AnimatedVisibility(visible = uiState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
                             var isValueMasked by remember { mutableStateOf(value = true) }
                             CustomTextField(
                                 value = currentConfirmPassword,
-                                onValueChange = { viewModel.updateConfirmPassword(value = it) },
+                                onValueChange = onUpdateConfirmPassword,
                                 placeholder = "Confirm Password",
                                 leadingIcon = Icons.Default.Lock,
                                 maskValue = true,
@@ -205,7 +227,7 @@ public fun AuthScreen(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         // FIXME: I have to remove the padding of this block of composables
-                        AnimatedVisibility(visible = screenState is AuthUiState.SignIn) {
+                        AnimatedVisibility(visible = uiState is AuthUiState.SignIn) {
                             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                                 TextButton(contentPadding = PaddingValues(all = 0.dp), onClick = { /* TODO */ }) {
                                     Text("Forgot Password?", color = Blue400, fontSize = 12.sp, fontWeight = FontWeight.Medium)
@@ -215,10 +237,10 @@ public fun AuthScreen(
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        Button(onClick = { viewModel.submit() }, shape = RoundedCornerShape(size = 12.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
+                        Button(onClick = onSubmit, shape = RoundedCornerShape(size = 12.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
                             Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    val text = if (screenState is AuthUiState.SignIn) "Sign In" else "Create Account"
+                                    val text = if (uiState is AuthUiState.SignIn) "Sign In" else "Create Account"
 
                                     Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
                                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
@@ -232,4 +254,49 @@ public fun AuthScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun AuthContentPreview_Loading() {
+    AuthContent(
+        uiState = AuthUiState.Loading,
+        onUpdateEmail = {},
+        onUpdatePassword = {},
+        onUpdateConfirmPassword = {},
+        onUpdateDisplayName = {},
+        onTabChangeToSignUp = {},
+        onTabChangeToSignIn = {},
+        onSubmit = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AuthContentPreview_SignIn() {
+    AuthContent(
+        uiState = AuthUiState.SignIn(email = "constell@example.com", password = "LoremIpsum123"),
+        onUpdateEmail = {},
+        onUpdatePassword = {},
+        onUpdateConfirmPassword = {},
+        onUpdateDisplayName = {},
+        onTabChangeToSignUp = {},
+        onTabChangeToSignIn = {},
+        onSubmit = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AuthContentPreview_SignUp() {
+    AuthContent(
+        uiState = AuthUiState.SignUp(displayName = "Constell User", email = "constell@example.com", password = "LoremIpsum123", confirmPassword = "LoremIpsum123"),
+        onUpdateEmail = {},
+        onUpdatePassword = {},
+        onUpdateConfirmPassword = {},
+        onUpdateDisplayName = {},
+        onTabChangeToSignUp = {},
+        onTabChangeToSignIn = {},
+        onSubmit = {}
+    )
 }
