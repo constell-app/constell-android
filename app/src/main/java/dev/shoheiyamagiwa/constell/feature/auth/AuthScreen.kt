@@ -100,6 +100,8 @@ public fun AuthScreen(
                 is AuthUiEvent.NavigateToHome -> {
                     onNavigateToHome()
                 }
+
+                else -> {}
             }
         }
     }
