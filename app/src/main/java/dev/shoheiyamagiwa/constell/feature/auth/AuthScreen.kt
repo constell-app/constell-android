@@ -1,9 +1,5 @@
 package dev.shoheiyamagiwa.constell.feature.auth
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,14 +48,12 @@ import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.composable.AppLogo
 import dev.shoheiyamagiwa.constell.composable.Background
 import dev.shoheiyamagiwa.constell.composable.CustomTextField
-import dev.shoheiyamagiwa.constell.composable.ErrorAlert
 import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthHeader
 import dev.shoheiyamagiwa.constell.feature.auth.composable.TabSwitcher
 import dev.shoheiyamagiwa.constell.ui.theme.Blue400
 import dev.shoheiyamagiwa.constell.ui.theme.Blue600
 import dev.shoheiyamagiwa.constell.ui.theme.Purple500
 import dev.shoheiyamagiwa.constell.ui.theme.Purple600
-
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -113,42 +107,6 @@ private fun AuthContent(
     onTabChangeToSignIn: () -> Unit,
     onSubmit: () -> Unit
 ) {
-    val currentDisplayName = when (uiState) {
-        is AuthUiState.SignUp -> uiState.displayName.value
-        else -> ""
-    }
-
-    val currentEmail = when (uiState) {
-        is AuthUiState.SignUp -> uiState.email.value
-        is AuthUiState.SignIn -> uiState.email.value
-        else -> ""
-    }
-
-    val currentPassword = when (uiState) {
-        is AuthUiState.SignUp -> uiState.password.value
-        is AuthUiState.SignIn -> uiState.password.value
-        else -> ""
-    }
-
-    val currentConfirmPassword = when (uiState) {
-        is AuthUiState.SignUp -> uiState.confirmPassword.value
-        else -> ""
-    }
-
-    val errorMessages = when (uiState) {
-        is AuthUiState.SignUp -> listOfNotNull(
-            uiState.displayName.errorMessageResId,
-            uiState.email.errorMessageResId,
-            uiState.password.errorMessageResId,
-            uiState.confirmPassword.errorMessageResId
-        ).map { stringResource(id = it) }
-        is AuthUiState.SignIn -> listOfNotNull(
-            uiState.email.errorMessageResId,
-            uiState.password.errorMessageResId
-        ).map { stringResource(id = it) }
-        else -> emptyList()
-    }
-
     // TODO: Getting UI texts from string resources
     Background(alignment = Alignment.Center) {
         when (uiState) {
@@ -156,155 +114,360 @@ private fun AuthContent(
                 CircularProgressIndicator()
             }
 
-            else -> {
-                Column(modifier = Modifier.fillMaxSize().systemBarsPadding().padding(horizontal = 24.dp, vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    Spacer(modifier = Modifier.height(48.dp))
+            is AuthUiState.SignIn -> {
+                SignInContent(
+                    uiState = uiState,
+                    onUpdateEmail = onUpdateEmail,
+                    onUpdatePassword = onUpdatePassword,
+                    onTabChangeToSignUp = onTabChangeToSignUp,
+                    onSubmit = onSubmit
+                )
+            }
 
-                    AuthHeader(
-                        modifier = Modifier.fillMaxWidth(),
-                        logo = {
-                            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().drawBehind {
-                                // Gradient for an entire background
-                                val radius = size.maxDimension / 1.5F
-                                val brush = Brush.radialGradient(colors = listOf(Purple500.copy(alpha = 0.1F), Color.Transparent), center = center, radius = radius)
+            is AuthUiState.SignUp -> {
+                SignUpContent(
+                    uiState = uiState,
+                    onUpdateDisplayName = onUpdateDisplayName,
+                    onUpdateEmail = onUpdateEmail,
+                    onUpdatePassword = onUpdatePassword,
+                    onUpdateConfirmPassword = onUpdateConfirmPassword,
+                    onTabChangeToSignIn = onTabChangeToSignIn,
+                    onSubmit = onSubmit
+                )
+            }
+        }
+    }
+}
 
-                                drawCircle(brush, radius)
-                            }) {
-                                Box(contentAlignment = Alignment.Center, modifier = Modifier.drawBehind {
-                                    // Gradient for the logo
-                                    val radius = (size.maxDimension / 2.0F) + 16.dp.toPx()
-                                    val brush = Brush.radialGradient(colors = listOf(Purple500.copy(alpha = 0.3F), Color.Transparent), center = center, radius = radius)
+@Composable
+private fun SignUpContent(
+    uiState: AuthUiState.SignUp,
+    onUpdateDisplayName: (String) -> Unit,
+    onUpdateEmail: (String) -> Unit,
+    onUpdatePassword: (String) -> Unit,
+    onUpdateConfirmPassword: (String) -> Unit,
+    onTabChangeToSignIn: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.height(48.dp))
 
-                                    drawCircle(brush, radius)
-                                }) {
-                                    AppLogo()
-                                }
-                            }
-                        },
-                        title = if (uiState is AuthUiState.SignIn) stringResource(id = R.string.auth_text_signin_title) else stringResource(id = R.string.auth_text_signup_title),
-                        subtitle = if (uiState is AuthUiState.SignIn) stringResource(id = R.string.auth_text_signin_subtitle) else stringResource(id = R.string.auth_text_signup_subtitle)
+        AuthHeader(
+            modifier = Modifier.fillMaxWidth(),
+            logo = {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().drawBehind {
+                    // Gradient for an entire background
+                    val radius = size.maxDimension / 1.5F
+                    val brush = Brush.radialGradient(
+                        colors = listOf(Purple500.copy(alpha = 0.1F), Color.Transparent),
+                        center = center,
+                        radius = radius
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    drawCircle(brush, radius)
+                }) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.drawBehind {
+                        // Gradient for the logo
+                        val radius = (size.maxDimension / 2.0F) + 16.dp.toPx()
+                        val brush = Brush.radialGradient(
+                            colors = listOf(Purple500.copy(alpha = 0.3F), Color.Transparent),
+                            center = center,
+                            radius = radius
+                        )
 
-                    TabSwitcher(
-                        modifier = Modifier.fillMaxWidth(),
-                        authUiState = uiState,
-                        onChangeToSignIn = onTabChangeToSignIn,
-                        onChangeToSignUp = onTabChangeToSignUp
-                    )
+                        drawCircle(brush, radius)
+                    }) {
+                        AppLogo()
+                    }
+                }
+            },
+            title = stringResource(id = R.string.auth_text_signup_title),
+            subtitle = stringResource(id = R.string.auth_text_signup_subtitle)
+        )
 
-                    AnimatedVisibility(
-                        visible = errorMessages.isNotEmpty(),
-                        enter = expandVertically(animationSpec = spring()),
-                        exit = shrinkVertically(animationSpec = spring())
+        Spacer(modifier = Modifier.height(32.dp))
+
+        TabSwitcher(
+            modifier = Modifier.fillMaxWidth(),
+            authUiState = uiState,
+            onChangeToSignIn = onTabChangeToSignIn,
+            onChangeToSignUp = {}
+        )
+
+        // TODO: I need to handle error messages in AuthViewModel
+//        val errorMessages = listOfNotNull(
+//            uiState.displayName.errorMessageResId,
+//            uiState.email.errorMessageResId,
+//            uiState.password.errorMessageResId,
+//            uiState.confirmPassword.errorMessageResId
+//        ).map { stringResource(id = it) }
+//
+//        AnimatedVisibility(
+//            visible = errorMessages.isNotEmpty(),
+//            enter = expandVertically(animationSpec = spring()),
+//            exit = shrinkVertically(animationSpec = spring())
+//        ) {
+//            Column {
+//                Spacer(modifier = Modifier.height(24.dp))
+//                ErrorAlert(
+//                    message = errorMessages.firstOrNull() ?: "",
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//            }
+//        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Display Name
+            CustomTextField(
+                value = uiState.displayName.value,
+                onValueChange = onUpdateDisplayName,
+                placeholder = stringResource(id = R.string.auth_label_display_name),
+                leadingIcon = Icons.Default.Person,
+                isError = uiState.displayName.hasError()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Email
+            CustomTextField(
+                value = uiState.email.value,
+                onValueChange = onUpdateEmail,
+                placeholder = stringResource(id = R.string.auth_label_email),
+                leadingIcon = Icons.Default.Email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                isError = uiState.email.hasError()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Password
+            var isValueMasked by remember { mutableStateOf(value = true) }
+            CustomTextField(
+                value = uiState.password.value,
+                onValueChange = onUpdatePassword,
+                placeholder = stringResource(id = R.string.auth_label_password),
+                leadingIcon = Icons.Default.Lock,
+                maskValue = true,
+                isValueMasked = isValueMasked,
+                onMaskToggled = { isValueMasked = !isValueMasked },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                isError = uiState.password.hasError()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Confirm Password
+            var isValueMasked2 by remember { mutableStateOf(value = true) }
+            CustomTextField(
+                value = uiState.confirmPassword.value,
+                onValueChange = onUpdateConfirmPassword,
+                placeholder = stringResource(id = R.string.auth_label_confirm_password),
+                leadingIcon = Icons.Default.Lock,
+                maskValue = true,
+                isValueMasked = isValueMasked2,
+                onMaskToggled = { isValueMasked2 = !isValueMasked2 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                isError = uiState.confirmPassword.hasError()
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = onSubmit,
+                shape = RoundedCornerShape(size = 12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                contentPadding = PaddingValues(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column {
-                            Spacer(modifier = Modifier.height(24.dp))
-                            ErrorAlert(
-                                message = errorMessages.firstOrNull() ?: "",
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
+                        val text = stringResource(id = R.string.auth_button_create_account)
 
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        // Display Name
-                        AnimatedVisibility(visible = uiState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
-                            CustomTextField(
-                                value = currentDisplayName,
-                                onValueChange = onUpdateDisplayName,
-                                placeholder = stringResource(id = R.string.auth_label_display_name),
-                                leadingIcon = Icons.Default.Person,
-                                isError = (uiState as? AuthUiState.SignUp)?.displayName?.hasError() ?: false
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Email
-                        CustomTextField(
-                            value = currentEmail,
-                            onValueChange = onUpdateEmail,
-                            placeholder = stringResource(id = R.string.auth_label_email),
-                            leadingIcon = Icons.Default.Email,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            isError = when (uiState) {
-                                is AuthUiState.SignUp -> uiState.email.hasError()
-                                is AuthUiState.SignIn -> uiState.email.hasError()
-                                else -> false
-                            }
+                        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
                         )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Password
-                        var isValueMasked by remember { mutableStateOf(value = true) }
-                        CustomTextField(
-                            value = currentPassword,
-                            onValueChange = onUpdatePassword,
-                            placeholder = stringResource(id = R.string.auth_label_password),
-                            leadingIcon = Icons.Default.Lock,
-                            maskValue = true,
-                            isValueMasked = isValueMasked,
-                            onMaskToggled = { isValueMasked = !isValueMasked },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                            isError = when (uiState) {
-                                is AuthUiState.SignUp -> uiState.password.hasError()
-                                is AuthUiState.SignIn -> uiState.password.hasError()
-                                else -> false
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Confirm Password
-                        AnimatedVisibility(visible = uiState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
-                            var isValueMasked by remember { mutableStateOf(value = true) }
-                            CustomTextField(
-                                value = currentConfirmPassword,
-                                onValueChange = onUpdateConfirmPassword,
-                                placeholder = stringResource(id = R.string.auth_label_confirm_password),
-                                leadingIcon = Icons.Default.Lock,
-                                maskValue = true,
-                                isValueMasked = isValueMasked,
-                                onMaskToggled = { isValueMasked = !isValueMasked },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                                isError = (uiState as? AuthUiState.SignUp)?.confirmPassword?.hasError() ?: false
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        // FIXME: I have to remove the padding of this block of composables
-                        AnimatedVisibility(visible = uiState is AuthUiState.SignIn) {
-                            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                                TextButton(contentPadding = PaddingValues(all = 0.dp), onClick = { /* TODO */ }) {
-                                    Text(stringResource(id = R.string.auth_button_forgot_password), color = Blue400, fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        Button(onClick = onSubmit, shape = RoundedCornerShape(size = 12.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
-                            Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    val text = if (uiState is AuthUiState.SignIn) stringResource(id = R.string.auth_button_sign_in) else stringResource(id = R.string.auth_button_create_account)
-
-                                    Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
-                                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
-                                }
-                            }
-                        }
                     }
-
-                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
+@Composable
+private fun SignInContent(
+    uiState: AuthUiState.SignIn,
+    onUpdateEmail: (String) -> Unit,
+    onUpdatePassword: (String) -> Unit,
+    onTabChangeToSignUp: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.height(48.dp))
+
+        AuthHeader(
+            modifier = Modifier.fillMaxWidth(),
+            logo = {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().drawBehind {
+                    // Gradient for an entire background
+                    val radius = size.maxDimension / 1.5F
+                    val brush = Brush.radialGradient(
+                        colors = listOf(Purple500.copy(alpha = 0.1F), Color.Transparent),
+                        center = center,
+                        radius = radius
+                    )
+
+                    drawCircle(brush, radius)
+                }) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.drawBehind {
+                        // Gradient for the logo
+                        val radius = (size.maxDimension / 2.0F) + 16.dp.toPx()
+                        val brush = Brush.radialGradient(
+                            colors = listOf(Purple500.copy(alpha = 0.3F), Color.Transparent),
+                            center = center,
+                            radius = radius
+                        )
+
+                        drawCircle(brush, radius)
+                    }) {
+                        AppLogo()
+                    }
+                }
+            },
+            title = stringResource(id = R.string.auth_text_signin_title),
+            subtitle = stringResource(id = R.string.auth_text_signin_subtitle)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        TabSwitcher(
+            modifier = Modifier.fillMaxWidth(),
+            authUiState = uiState,
+            onChangeToSignIn = {},
+            onChangeToSignUp = onTabChangeToSignUp
+        )
+
+        // TODO: I need to handle error messages in AuthViewModel
+//        val errorMessages = listOfNotNull(
+//            uiState.email.errorMessageResId,
+//            uiState.password.errorMessageResId
+//        ).map { stringResource(id = it) }
+//
+//        AnimatedVisibility(
+//            visible = errorMessages.isNotEmpty(),
+//            enter = expandVertically(animationSpec = spring()),
+//            exit = shrinkVertically(animationSpec = spring())
+//        ) {
+//            Column {
+//                Spacer(modifier = Modifier.height(24.dp))
+//                ErrorAlert(
+//                    message = errorMessages.firstOrNull() ?: "",
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//            }
+//        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Email
+            CustomTextField(
+                value = uiState.email.value,
+                onValueChange = onUpdateEmail,
+                placeholder = stringResource(id = R.string.auth_label_email),
+                leadingIcon = Icons.Default.Email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                isError = uiState.email.hasError()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Password
+            var isValueMasked by remember { mutableStateOf(value = true) }
+            CustomTextField(
+                value = uiState.password.value,
+                onValueChange = onUpdatePassword,
+                placeholder = stringResource(id = R.string.auth_label_password),
+                leadingIcon = Icons.Default.Lock,
+                maskValue = true,
+                isValueMasked = isValueMasked,
+                onMaskToggled = { isValueMasked = !isValueMasked },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                isError = uiState.password.hasError()
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                TextButton(contentPadding = PaddingValues(all = 0.dp), onClick = { /* TODO */ }) {
+                    Text(
+                        stringResource(id = R.string.auth_button_forgot_password),
+                        color = Blue400,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = onSubmit,
+                shape = RoundedCornerShape(size = 12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                contentPadding = PaddingValues(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        val text = stringResource(id = R.string.auth_button_sign_in)
+
+                        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
@@ -326,37 +489,37 @@ private fun AuthContentPreview_Loading() {
 @Preview(showBackground = true)
 @Composable
 private fun AuthContentPreview_SignIn() {
-    AuthContent(
-        uiState = AuthUiState.SignIn(
-            email = FormField.EmailField(value = "constell@example.com"),
-            password = FormField.PasswordField(value = "LoremIpsum123")
-        ),
-        onUpdateEmail = {},
-        onUpdatePassword = {},
-        onUpdateConfirmPassword = {},
-        onUpdateDisplayName = {},
-        onTabChangeToSignUp = {},
-        onTabChangeToSignIn = {},
-        onSubmit = {}
-    )
+    Background(alignment = Alignment.Center) {
+        SignInContent(
+            uiState = AuthUiState.SignIn(
+                email = FormField.EmailField(value = "constell@example.com"),
+                password = FormField.PasswordField(value = "LoremIpsum123")
+            ),
+            onUpdateEmail = {},
+            onUpdatePassword = {},
+            onTabChangeToSignUp = {},
+            onSubmit = {}
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun AuthContentPreview_SignUp() {
-    AuthContent(
-        uiState = AuthUiState.SignUp(
-            displayName = FormField.DisplayNameField(value = "Constell User"),
-            email = FormField.EmailField(value = "constell@example.com"),
-            password = FormField.PasswordField(value = "LoremIpsum123"),
-            confirmPassword = FormField.ConfirmPasswordField(value = "LoremIpsum123")
-        ),
-        onUpdateEmail = {},
-        onUpdatePassword = {},
-        onUpdateConfirmPassword = {},
-        onUpdateDisplayName = {},
-        onTabChangeToSignUp = {},
-        onTabChangeToSignIn = {},
-        onSubmit = {}
-    )
+    Background(alignment = Alignment.Center) {
+        SignUpContent(
+            uiState = AuthUiState.SignUp(
+                displayName = FormField.DisplayNameField(value = "Constell User"),
+                email = FormField.EmailField(value = "constell@example.com"),
+                password = FormField.PasswordField(value = "LoremIpsum123"),
+                confirmPassword = FormField.ConfirmPasswordField(value = "LoremIpsum123")
+            ),
+            onUpdateDisplayName = {},
+            onUpdateEmail = {},
+            onUpdatePassword = {},
+            onUpdateConfirmPassword = {},
+            onTabChangeToSignIn = {},
+            onSubmit = {}
+        )
+    }
 }
