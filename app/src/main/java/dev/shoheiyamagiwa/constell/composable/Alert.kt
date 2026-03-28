@@ -24,7 +24,7 @@ import dev.shoheiyamagiwa.constell.R
 
 @Composable
 public fun ErrorAlert(message: String, modifier: Modifier = Modifier) {
-    Alert(contentColor = Color.Red, message = message, iconId = R.drawable.outline_error_24, description = "Error", modifier = modifier)
+    Alert(contentColor = Color.Red, message = message, iconResId = R.drawable.outline_error_24, modifier = modifier)
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF202020)
@@ -34,16 +34,15 @@ private fun ErrorAlert_Preview() {
 }
 
 @Composable
-private fun Alert(contentColor: Color, message: String, @DrawableRes iconId: Int, description: String, modifier: Modifier = Modifier) {
+private fun Alert(contentColor: Color, message: String, @DrawableRes iconResId: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .padding(bottom = 16.dp)
             .background(color = contentColor.copy(alpha = 0.1F), shape = RoundedCornerShape(size = 12.dp))
             .border(width = 1.dp, color = contentColor.copy(alpha = 0.3F), shape = RoundedCornerShape(size = 12.dp))
             .padding(all = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(painter = painterResource(id = iconId), contentDescription = description, tint = contentColor, modifier = Modifier.size(20.dp))
+        Icon(painter = painterResource(id = iconResId), contentDescription = null, tint = contentColor, modifier = Modifier.size(20.dp))
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = message, color = contentColor, fontSize = 13.sp, fontWeight = FontWeight.Medium)
     }
