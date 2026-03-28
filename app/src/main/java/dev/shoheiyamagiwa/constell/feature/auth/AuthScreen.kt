@@ -68,7 +68,7 @@ public fun AuthScreen(
     onNavigateToConfirmEmail: (String) -> Unit = {},
     onNavigateToHome: () -> Unit = {},
 ) {
-    val screenState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEvent.collect { event ->
@@ -91,7 +91,7 @@ public fun AuthScreen(
     }
 
     AuthContent(
-        uiState = screenState,
+        uiState = uiState,
         onUpdateEmail = { viewModel.updateEmail(value = it) },
         onUpdatePassword = { viewModel.updatePassword(value = it) },
         onUpdateConfirmPassword = { viewModel.updateConfirmPassword(value = it) },
