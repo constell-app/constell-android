@@ -52,9 +52,6 @@ public sealed class FormField(val value: String = "", @param:StringRes open val 
 
     public class ConfirmPasswordField(value: String = "", @StringRes errorMessageResId: Int? = null) : FormField(value, errorMessageResId) {
         override fun validate(value: String): ConfirmPasswordField {
-            // ConfirmPasswordField requires comparison with the original password,
-            // which should be handled at the ViewModel or a specialized validate method.
-            // For now, we only check for empty value here.
             val error = when {
                 value.isEmpty() -> R.string.auth_error_password_empty
                 else -> null
