@@ -29,4 +29,9 @@
     <string name="auth_error_password_too_short">Password must be at least 8 characters</string>
     <string name="auth_error_confirm_password_mismatch">Passwords do not match</string>
     <string name="auth_error_display_name_empty">Please enter your display name</string>
+    <string name="auth_text_forgot_password_title">Forgot Password?</string>
+    <string name="auth_text_forgot_password_subtitle">Enter your registered email address to receive a password reset link.</string>
+    <string name="auth_button_send_reset_link">Send Reset Link</string>
+    <string name="auth_button_back_to_signin">Back to Sign In</string>
+    <string name="auth_success_password_reset_email_sent">Password reset email has been sent</string>
 </resources>

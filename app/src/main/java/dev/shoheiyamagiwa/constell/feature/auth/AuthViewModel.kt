@@ -93,6 +93,10 @@ public sealed class AuthUiState {
         val email: FormField.EmailField = FormField.EmailField(),
         val password: FormField.PasswordField = FormField.PasswordField()
     ) : AuthUiState()
+
+    public data class ForgotPassword(
+        val email: FormField.EmailField = FormField.EmailField()
+    ) : AuthUiState()
 }
 
 public sealed interface AuthUiEvent {
@@ -145,6 +149,12 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
             is AuthUiState.SignUp -> {
                 return
             }
+
+            is AuthUiState.ForgotPassword -> {
+                _uiState.value = AuthUiState.SignUp(
+                    email = currentState.email
+                )
+            }
         }
     }
 
@@ -166,6 +176,39 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                     email = currentState.email,
                     password = currentState.password
                 )
+            }
+
+            is AuthUiState.ForgotPassword -> {
+                _uiState.value = AuthUiState.SignIn(
+                    email = currentState.email
+                )
+            }
+        }
+    }
+
+    /**
+     * Update the screen to the forgot password screen
+     */
+    public fun changeToForgotPasswordUi() {
+        when (val currentState = _uiState.value) {
+            is AuthUiState.Loading -> {
+                return
+            }
+
+            is AuthUiState.SignIn -> {
+                _uiState.value = AuthUiState.ForgotPassword(
+                    email = currentState.email
+                )
+            }
+
+            is AuthUiState.SignUp -> {
+                _uiState.value = AuthUiState.ForgotPassword(
+                    email = currentState.email
+                )
+            }
+
+            is AuthUiState.ForgotPassword -> {
+                return
             }
         }
     }
@@ -209,6 +252,22 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 }
             }
 
+            is AuthUiState.ForgotPassword -> {
+                viewModelScope.launch {
+                    try {
+                        if (authRepository !is WithEmail) {
+                            throw AuthException.EmailAuthNotSupported()
+                        }
+
+                        authRepository.requestPasswordReset(state.email.value)
+
+                        _uiEventChannel.send(element = AuthUiEvent.PasswordResetEmailSent)
+                    } catch (e: Exception) {
+                        // TODO: Handle error
+                    }
+                }
+            }
+
             else -> {
                 throw IllegalStateException("Invalid screen state: ${_uiState.value}")
             }
@@ -228,6 +287,9 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
             _uiState.value = currentState.copy(email = currentState.email.validate(value))
         }
         if (currentState is AuthUiState.SignIn) {
+            _uiState.value = currentState.copy(email = currentState.email.validate(value))
+        }
+        if (currentState is AuthUiState.ForgotPassword) {
             _uiState.value = currentState.copy(email = currentState.email.validate(value))
         }
     }

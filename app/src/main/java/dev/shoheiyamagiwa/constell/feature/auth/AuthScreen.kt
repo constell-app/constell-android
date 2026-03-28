@@ -75,6 +75,10 @@ public fun AuthScreen(
                     onNavigateToHome()
                 }
 
+                is AuthUiEvent.PasswordResetEmailSent -> {
+                    // TODO: Show success message/alert
+                }
+
                 else -> {}
             }
         }
@@ -92,6 +96,7 @@ public fun AuthScreen(
         onUpdateDisplayName = { viewModel.updateDisplayName(value = it) },
         onTabChangeToSignUp = { viewModel.changeToSignUpUi() },
         onTabChangeToSignIn = { viewModel.changeToSignInUi() },
+        onChangeToForgotPassword = { viewModel.changeToForgotPasswordUi() },
         onSubmit = { viewModel.submit() }
     )
 }
@@ -105,6 +110,7 @@ private fun AuthContent(
     onUpdateDisplayName: (String) -> Unit,
     onTabChangeToSignUp: () -> Unit,
     onTabChangeToSignIn: () -> Unit,
+    onChangeToForgotPassword: () -> Unit,
     onSubmit: () -> Unit
 ) {
     // TODO: Getting UI texts from string resources
@@ -120,6 +126,7 @@ private fun AuthContent(
                     onUpdateEmail = onUpdateEmail,
                     onUpdatePassword = onUpdatePassword,
                     onTabChangeToSignUp = onTabChangeToSignUp,
+                    onChangeToForgotPassword = onChangeToForgotPassword,
                     onSubmit = onSubmit
                 )
             }
@@ -131,6 +138,15 @@ private fun AuthContent(
                     onUpdateEmail = onUpdateEmail,
                     onUpdatePassword = onUpdatePassword,
                     onUpdateConfirmPassword = onUpdateConfirmPassword,
+                    onTabChangeToSignIn = onTabChangeToSignIn,
+                    onSubmit = onSubmit
+                )
+            }
+
+            is AuthUiState.ForgotPassword -> {
+                ForgotPasswordContent(
+                    uiState = uiState,
+                    onUpdateEmail = onUpdateEmail,
                     onTabChangeToSignIn = onTabChangeToSignIn,
                     onSubmit = onSubmit
                 )
@@ -324,6 +340,7 @@ private fun SignInContent(
     onUpdateEmail: (String) -> Unit,
     onUpdatePassword: (String) -> Unit,
     onTabChangeToSignUp: () -> Unit,
+    onChangeToForgotPassword: () -> Unit,
     onSubmit: () -> Unit
 ) {
     Column(
@@ -430,7 +447,7 @@ private fun SignInContent(
             Spacer(modifier = Modifier.height(4.dp))
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                TextButton(contentPadding = PaddingValues(all = 0.dp), onClick = { /* TODO */ }) {
+                TextButton(contentPadding = PaddingValues(all = 0.dp), onClick = onChangeToForgotPassword) {
                     Text(
                         stringResource(id = R.string.auth_button_forgot_password),
                         color = Blue400,
@@ -471,6 +488,115 @@ private fun SignInContent(
     }
 }
 
+@Composable
+private fun ForgotPasswordContent(
+    uiState: AuthUiState.ForgotPassword,
+    onUpdateEmail: (String) -> Unit,
+    onTabChangeToSignIn: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.height(48.dp))
+
+        AuthHeader(
+            modifier = Modifier.fillMaxWidth(),
+            logo = {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().drawBehind {
+                    // Gradient for an entire background
+                    val radius = size.maxDimension / 1.5F
+                    val brush = Brush.radialGradient(
+                        colors = listOf(Purple500.copy(alpha = 0.1F), Color.Transparent),
+                        center = center,
+                        radius = radius
+                    )
+
+                    drawCircle(brush, radius)
+                }) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.drawBehind {
+                        // Gradient for the logo
+                        val radius = (size.maxDimension / 2.0F) + 16.dp.toPx()
+                        val brush = Brush.radialGradient(
+                            colors = listOf(Purple500.copy(alpha = 0.3F), Color.Transparent),
+                            center = center,
+                            radius = radius
+                        )
+
+                        drawCircle(brush, radius)
+                    }) {
+                        AppLogo()
+                    }
+                }
+            },
+            title = stringResource(id = R.string.auth_text_forgot_password_title),
+            subtitle = stringResource(id = R.string.auth_text_forgot_password_subtitle)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // No TabSwitcher here as it's a sub-flow of SignIn
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Email
+            CustomTextField(
+                value = uiState.email.value,
+                onValueChange = onUpdateEmail,
+                placeholder = stringResource(id = R.string.auth_label_email),
+                leadingIcon = Icons.Default.Email,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                isError = uiState.email.hasError()
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = onSubmit,
+                shape = RoundedCornerShape(size = 12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                contentPadding = PaddingValues(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        val text = stringResource(id = R.string.auth_button_send_reset_link)
+
+                        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                TextButton(onClick = onTabChangeToSignIn) {
+                    Text(
+                        stringResource(id = R.string.auth_button_back_to_signin),
+                        color = Blue400,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
 @Preview
 @Composable
 private fun AuthContentPreview_Loading() {
@@ -482,6 +608,7 @@ private fun AuthContentPreview_Loading() {
         onUpdateDisplayName = {},
         onTabChangeToSignUp = {},
         onTabChangeToSignIn = {},
+        onChangeToForgotPassword = {},
         onSubmit = {}
     )
 }
@@ -498,6 +625,7 @@ private fun AuthContentPreview_SignIn() {
             onUpdateEmail = {},
             onUpdatePassword = {},
             onTabChangeToSignUp = {},
+            onChangeToForgotPassword = {},
             onSubmit = {}
         )
     }
@@ -518,6 +646,21 @@ private fun AuthContentPreview_SignUp() {
             onUpdateEmail = {},
             onUpdatePassword = {},
             onUpdateConfirmPassword = {},
+            onTabChangeToSignIn = {},
+            onSubmit = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AuthContentPreview_ForgotPassword() {
+    Background(alignment = Alignment.Center) {
+        ForgotPasswordContent(
+            uiState = AuthUiState.ForgotPassword(
+                email = FormField.EmailField(value = "constell@example.com")
+            ),
+            onUpdateEmail = {},
             onTabChangeToSignIn = {},
             onSubmit = {}
         )

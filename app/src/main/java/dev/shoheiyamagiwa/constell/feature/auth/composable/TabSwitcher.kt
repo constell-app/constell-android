@@ -47,9 +47,9 @@ public fun TabSwitcher(authUiState: AuthUiState, modifier: Modifier = Modifier, 
     fun textColor(condition: Boolean) = if (condition) Color.White else Slate400.copy(alpha = 0.5F)
 
     val currentTabIndex = when (authUiState) {
-        is AuthUiState.Loading -> 0 // Fail-safe
         is AuthUiState.SignIn -> 0
         is AuthUiState.SignUp -> 1
+        else -> 0
     }
     var composableSize by remember { mutableStateOf(value = IntSize.Zero) }
     val density = LocalDensity.current
