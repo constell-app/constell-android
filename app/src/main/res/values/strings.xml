@@ -23,4 +23,10 @@
     <string name="auth_button_sign_in">ログイン</string>
     <string name="auth_button_sign_up">新規登録</string>
     <string name="auth_button_create_account">アカウント作成</string>
+    <string name="auth_error_email_empty">メールアドレスを入力してください</string>
+    <string name="auth_error_email_invalid">正しいメール形式で入力してください</string>
+    <string name="auth_error_password_empty">パスワードを入力してください</string>
+    <string name="auth_error_password_too_short">パスワードは8文字以上で入力してください</string>
+    <string name="auth_error_confirm_password_mismatch">パスワードが一致しません</string>
+    <string name="auth_error_display_name_empty">表示名を入力してください</string>
 </resources>

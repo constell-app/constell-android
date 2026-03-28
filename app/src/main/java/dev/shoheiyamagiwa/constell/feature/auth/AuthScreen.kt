@@ -113,24 +113,24 @@ private fun AuthContent(
     onSubmit: () -> Unit
 ) {
     val currentDisplayName = when (uiState) {
-        is AuthUiState.SignUp -> uiState.displayName
+        is AuthUiState.SignUp -> uiState.displayName.value
         else -> ""
     }
 
     val currentEmail = when (uiState) {
-        is AuthUiState.SignUp -> uiState.email
-        is AuthUiState.SignIn -> uiState.email
+        is AuthUiState.SignUp -> uiState.email.value
+        is AuthUiState.SignIn -> uiState.email.value
         else -> ""
     }
 
     val currentPassword = when (uiState) {
-        is AuthUiState.SignUp -> uiState.password
-        is AuthUiState.SignIn -> uiState.password
+        is AuthUiState.SignUp -> uiState.password.value
+        is AuthUiState.SignIn -> uiState.password.value
         else -> ""
     }
 
     val currentConfirmPassword = when (uiState) {
-        is AuthUiState.SignUp -> uiState.confirmPassword
+        is AuthUiState.SignUp -> uiState.confirmPassword.value
         else -> ""
     }
 
@@ -275,7 +275,10 @@ private fun AuthContentPreview_Loading() {
 @Composable
 private fun AuthContentPreview_SignIn() {
     AuthContent(
-        uiState = AuthUiState.SignIn(email = "constell@example.com", password = "LoremIpsum123"),
+        uiState = AuthUiState.SignIn(
+            email = FormField.EmailField(value = "constell@example.com"),
+            password = FormField.PasswordField(value = "LoremIpsum123")
+        ),
         onUpdateEmail = {},
         onUpdatePassword = {},
         onUpdateConfirmPassword = {},
@@ -290,7 +293,12 @@ private fun AuthContentPreview_SignIn() {
 @Composable
 private fun AuthContentPreview_SignUp() {
     AuthContent(
-        uiState = AuthUiState.SignUp(displayName = "Constell User", email = "constell@example.com", password = "LoremIpsum123", confirmPassword = "LoremIpsum123"),
+        uiState = AuthUiState.SignUp(
+            displayName = FormField.DisplayNameField(value = "Constell User"),
+            email = FormField.EmailField(value = "constell@example.com"),
+            password = FormField.PasswordField(value = "LoremIpsum123"),
+            confirmPassword = FormField.ConfirmPasswordField(value = "LoremIpsum123")
+        ),
         onUpdateEmail = {},
         onUpdatePassword = {},
         onUpdateConfirmPassword = {},

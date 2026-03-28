@@ -23,4 +23,10 @@
     <string name="auth_button_sign_in">Sign In</string>
     <string name="auth_button_sign_up">Sign Up</string>
     <string name="auth_button_create_account">Create Account</string>
+    <string name="auth_error_email_empty">Please enter your email address</string>
+    <string name="auth_error_email_invalid">Please enter a valid email address</string>
+    <string name="auth_error_password_empty">Please enter your password</string>
+    <string name="auth_error_password_too_short">Password must be at least 8 characters</string>
+    <string name="auth_error_confirm_password_mismatch">Passwords do not match</string>
+    <string name="auth_error_display_name_empty">Please enter your display name</string>
 </resources>
