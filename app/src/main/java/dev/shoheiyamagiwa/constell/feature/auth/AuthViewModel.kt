@@ -19,6 +19,7 @@ public sealed class AuthUiState {
 public sealed interface AuthUiEvent {
     public data object NavigateToHome : AuthUiEvent
     public data class NavigateToConfirmEmail(val email: String) : AuthUiEvent
+    public data object PasswordResetEmailSent : AuthUiEvent // TODO: Implement password reset feature and use this
 }
 
 public class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
@@ -90,11 +91,11 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 viewModelScope.launch {
                     try {
                         if (state.password != state.confirmPassword) {
-                            throw Exception("Passwords do not match")
+                            throw AuthException.PasswordMismatch()
                         }
 
                         if (authRepository !is WithEmail) {
-                            throw Exception("Email authentication is not supported")
+                            throw AuthException.EmailAuthNotSupported()
                         }
 
                         authRepository.signUpWithEmail(state.email, state.password)
@@ -111,7 +112,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 viewModelScope.launch {
                     try {
                         if (authRepository !is WithEmail) {
-                            throw Exception("Email authentication is not supported")
+                            throw AuthException.EmailAuthNotSupported()
                         }
 
                         authRepository.signInWithEmail(state.email, state.password)
@@ -123,7 +124,9 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 }
             }
 
-            else -> throw IllegalStateException("Invalid screen state: ${_uiState.value}")
+            else -> {
+                throw IllegalStateException("Invalid screen state: ${_uiState.value}")
+            }
         }
     }
 
