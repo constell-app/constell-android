@@ -166,8 +166,8 @@ private fun AuthContent(
                                 }
                             }
                         },
-                        title = stringResource(id = R.string.auth_text_signup_title),
-                        subtitle = stringResource(id = R.string.auth_text_signup_subtitle)
+                        title = if (uiState is AuthUiState.SignIn) stringResource(id = R.string.auth_text_signin_title) else stringResource(id = R.string.auth_text_signup_title),
+                        subtitle = if (uiState is AuthUiState.SignIn) stringResource(id = R.string.auth_text_signin_subtitle) else stringResource(id = R.string.auth_text_signup_subtitle)
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -184,13 +184,13 @@ private fun AuthContent(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // Display Name
                         AnimatedVisibility(visible = uiState is AuthUiState.SignUp, enter = expandVertically(animationSpec = spring()), exit = shrinkVertically(animationSpec = spring())) {
-                            CustomTextField(value = currentDisplayName, onValueChange = onUpdateDisplayName, placeholder = "Display Name", leadingIcon = Icons.Default.Person)
+                            CustomTextField(value = currentDisplayName, onValueChange = onUpdateDisplayName, placeholder = stringResource(id = R.string.auth_label_display_name), leadingIcon = Icons.Default.Person)
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Email
-                        CustomTextField(value = currentEmail, onValueChange = onUpdateEmail, placeholder = "Email", leadingIcon = Icons.Default.Email, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
+                        CustomTextField(value = currentEmail, onValueChange = onUpdateEmail, placeholder = stringResource(id = R.string.auth_label_email), leadingIcon = Icons.Default.Email, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -199,7 +199,7 @@ private fun AuthContent(
                         CustomTextField(
                             value = currentPassword,
                             onValueChange = onUpdatePassword,
-                            placeholder = "Password",
+                            placeholder = stringResource(id = R.string.auth_label_password),
                             leadingIcon = Icons.Default.Lock,
                             maskValue = true,
                             isValueMasked = isValueMasked,
@@ -215,7 +215,7 @@ private fun AuthContent(
                             CustomTextField(
                                 value = currentConfirmPassword,
                                 onValueChange = onUpdateConfirmPassword,
-                                placeholder = "Confirm Password",
+                                placeholder = stringResource(id = R.string.auth_label_confirm_password),
                                 leadingIcon = Icons.Default.Lock,
                                 maskValue = true,
                                 isValueMasked = isValueMasked,
@@ -230,7 +230,7 @@ private fun AuthContent(
                         AnimatedVisibility(visible = uiState is AuthUiState.SignIn) {
                             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                                 TextButton(contentPadding = PaddingValues(all = 0.dp), onClick = { /* TODO */ }) {
-                                    Text("Forgot Password?", color = Blue400, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                                    Text(stringResource(id = R.string.auth_button_forgot_password), color = Blue400, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                                 }
                             }
                         }
@@ -240,7 +240,7 @@ private fun AuthContent(
                         Button(onClick = onSubmit, shape = RoundedCornerShape(size = 12.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), contentPadding = PaddingValues(), modifier = Modifier.fillMaxWidth().height(56.dp)) {
                             Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    val text = if (uiState is AuthUiState.SignIn) "Sign In" else "Create Account"
+                                    val text = if (uiState is AuthUiState.SignIn) stringResource(id = R.string.auth_button_sign_in) else stringResource(id = R.string.auth_button_create_account)
 
                                     Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
                                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))

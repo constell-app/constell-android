@@ -13,4 +13,14 @@
     <string name="walkthrough_desc_content_discover">思いがけない知識の交差点から、\\n新しいアイデアを発見しましょう。</string>
     <string name="auth_text_signup_title">Constellへようこそ</string>
     <string name="auth_text_signup_subtitle">AIによるあなたの第2の脳</string>
+    <string name="auth_text_signin_title">おかえりなさい</string>
+    <string name="auth_text_signin_subtitle">ログインして知識の探索を続けましょう</string>
+    <string name="auth_label_display_name">表示名</string>
+    <string name="auth_label_email">メールアドレス</string>
+    <string name="auth_label_password">パスワード</string>
+    <string name="auth_label_confirm_password">パスワード（確認）</string>
+    <string name="auth_button_forgot_password">パスワードを忘れた場合</string>
+    <string name="auth_button_sign_in">ログイン</string>
+    <string name="auth_button_sign_up">新規登録</string>
+    <string name="auth_button_create_account">アカウント作成</string>
 </resources>

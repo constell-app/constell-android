@@ -27,10 +27,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.feature.auth.AuthUiState
 import dev.shoheiyamagiwa.constell.ui.theme.Slate100
 import dev.shoheiyamagiwa.constell.ui.theme.Slate400
@@ -69,8 +71,8 @@ public fun TabSwitcher(authUiState: AuthUiState, modifier: Modifier = Modifier, 
         }
     }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-            TabSwitch(text = "Sign In", color = textColor(condition = isSignIn), onClick = onChangeToSignIn, modifier = Modifier.weight(0.5F))
-            TabSwitch(text = "Sign Up", color = textColor(condition = isSignUp), onClick = onChangeToSignUp, modifier = Modifier.weight(0.5F))
+            TabSwitch(text = stringResource(id = R.string.auth_button_sign_in), color = textColor(condition = isSignIn), onClick = onChangeToSignIn, modifier = Modifier.weight(0.5F))
+            TabSwitch(text = stringResource(id = R.string.auth_button_sign_up), color = textColor(condition = isSignUp), onClick = onChangeToSignUp, modifier = Modifier.weight(0.5F))
         }
     }
 }
