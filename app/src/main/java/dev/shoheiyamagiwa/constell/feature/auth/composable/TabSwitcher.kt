@@ -27,27 +27,29 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import dev.shoheiyamagiwa.constell.feature.auth.AuthScreenState
+import dev.shoheiyamagiwa.constell.R
+import dev.shoheiyamagiwa.constell.feature.auth.AuthUiState
 import dev.shoheiyamagiwa.constell.ui.theme.Slate100
 import dev.shoheiyamagiwa.constell.ui.theme.Slate400
 import dev.shoheiyamagiwa.constell.ui.theme.Slate800
 
 // TODO: Refactor this composable to be more idiomatic Compose
 @Composable
-public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Modifier, onChangeToSignIn: () -> Unit, onChangeToSignUp: () -> Unit) {
-    val isSignIn = authScreenState is AuthScreenState.SignIn
-    val isSignUp = authScreenState is AuthScreenState.SignUp
+public fun TabSwitcher(authUiState: AuthUiState, modifier: Modifier = Modifier, onChangeToSignIn: () -> Unit, onChangeToSignUp: () -> Unit) {
+    val isSignIn = authUiState is AuthUiState.SignIn
+    val isSignUp = authUiState is AuthUiState.SignUp
 
     fun textColor(condition: Boolean) = if (condition) Color.White else Slate400.copy(alpha = 0.5F)
 
-    val currentTabIndex = when (authScreenState) {
-        is AuthScreenState.Loading -> 0 // Fail-safe
-        is AuthScreenState.SignIn -> 0
-        is AuthScreenState.SignUp -> 1
+    val currentTabIndex = when (authUiState) {
+        is AuthUiState.SignIn -> 0
+        is AuthUiState.SignUp -> 1
+        else -> 0
     }
     var composableSize by remember { mutableStateOf(value = IntSize.Zero) }
     val density = LocalDensity.current
@@ -69,8 +71,8 @@ public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Mo
         }
     }) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-            TabSwitch(text = "Sign In", color = textColor(condition = isSignIn), onClick = onChangeToSignIn, modifier = Modifier.weight(0.5F))
-            TabSwitch(text = "Sign Up", color = textColor(condition = isSignUp), onClick = onChangeToSignUp, modifier = Modifier.weight(0.5F))
+            TabSwitch(text = stringResource(id = R.string.auth_button_sign_in), color = textColor(condition = isSignIn), onClick = onChangeToSignIn, modifier = Modifier.weight(0.5F))
+            TabSwitch(text = stringResource(id = R.string.auth_button_sign_up), color = textColor(condition = isSignUp), onClick = onChangeToSignUp, modifier = Modifier.weight(0.5F))
         }
     }
 }
@@ -78,13 +80,13 @@ public fun TabSwitcher(authScreenState: AuthScreenState, modifier: Modifier = Mo
 @Preview
 @Composable
 private fun TabSwitcherPreview_SignIn() {
-    TabSwitcher(authScreenState = AuthScreenState.SignIn(), onChangeToSignIn = {}, onChangeToSignUp = {})
+    TabSwitcher(authUiState = AuthUiState.SignIn(), onChangeToSignIn = {}, onChangeToSignUp = {})
 }
 
 @Preview
 @Composable
 private fun TabSwitcherPreview_SignUp() {
-    TabSwitcher(authScreenState = AuthScreenState.SignUp(), onChangeToSignIn = {}, onChangeToSignUp = {})
+    TabSwitcher(authUiState = AuthUiState.SignUp(), onChangeToSignIn = {}, onChangeToSignUp = {})
 }
 
 @Composable

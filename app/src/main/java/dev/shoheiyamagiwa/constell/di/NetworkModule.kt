@@ -7,19 +7,11 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import org.koin.dsl.module
 
-/**
- * Ktor HTTP Client (singleton)
- */
-public val networkModule = module {
+val networkModule = module {
     single {
-        HttpClient(engineFactory = CIO)
+        HttpClient(CIO)
     }
-}
 
-/**
- * Supabase client (singleton)
- */
-public val supabase = module {
     single {
         createSupabaseClient(
             supabaseUrl = "https://bmylggxjtskzmroxiedh.supabase.co",
