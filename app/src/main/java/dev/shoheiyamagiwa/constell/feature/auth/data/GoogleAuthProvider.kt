@@ -1,5 +1,5 @@
 package dev.shoheiyamagiwa.constell.feature.auth.data
 
-public interface SignableInWithGoogle {
+public interface GoogleAuthProvider {
     public suspend fun signInWithGoogle()
 }

@@ -9,7 +9,7 @@ import io.github.jan.supabase.auth.providers.Github
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 
-public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) : AuthRepository, WithEmail, SignableInWithGoogle, SignableInWithGitHub {
+public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) : AuthRepository, EmailAuthProvider, GoogleAuthProvider, GitHubAuthProvider {
     override suspend fun signOut() {
         supabaseClient.auth.signOut()
     }

@@ -1,5 +1,5 @@
 package dev.shoheiyamagiwa.constell.feature.auth.data
 
-public interface SignableInWithGitHub {
+public interface GitHubAuthProvider {
     public suspend fun signInWithGitHub()
 }

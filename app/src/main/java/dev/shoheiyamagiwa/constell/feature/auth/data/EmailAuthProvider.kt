@@ -1,6 +1,6 @@
 package dev.shoheiyamagiwa.constell.feature.auth.data
 
-public interface WithEmail {
+public interface EmailAuthProvider {
     public suspend fun signUpWithEmail(email: String, password: String)
 
     public suspend fun signInWithEmail(email: String, password: String)

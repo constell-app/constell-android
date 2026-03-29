@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.feature.auth.data.AuthRepository
-import dev.shoheiyamagiwa.constell.feature.auth.data.WithEmail
+import dev.shoheiyamagiwa.constell.feature.auth.data.EmailAuthProvider
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -278,7 +278,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
         viewModelScope.launch {
             try {
-                if (authRepository !is WithEmail) {
+                if (authRepository !is EmailAuthProvider) {
                     throw AuthException.EmailAuthNotSupported()
                 }
 
@@ -315,7 +315,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
         viewModelScope.launch {
             try {
-                if (authRepository !is WithEmail) {
+                if (authRepository !is EmailAuthProvider) {
                     throw AuthException.EmailAuthNotSupported()
                 }
 
@@ -349,7 +349,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
         viewModelScope.launch {
             try {
-                if (authRepository !is WithEmail) {
+                if (authRepository !is EmailAuthProvider) {
                     throw AuthException.EmailAuthNotSupported()
                 }
 
