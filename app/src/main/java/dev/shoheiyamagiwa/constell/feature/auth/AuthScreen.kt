@@ -1,29 +1,21 @@
 package dev.shoheiyamagiwa.constell.feature.auth
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,9 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,15 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.shoheiyamagiwa.constell.R
-import dev.shoheiyamagiwa.constell.composable.AppLogo
 import dev.shoheiyamagiwa.constell.composable.Background
 import dev.shoheiyamagiwa.constell.composable.CustomTextField
 import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthHeader
+import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthLogoWithGradient
+import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthSubmitButton
 import dev.shoheiyamagiwa.constell.feature.auth.composable.TabSwitcher
 import dev.shoheiyamagiwa.constell.ui.theme.Blue400
-import dev.shoheiyamagiwa.constell.ui.theme.Blue600
-import dev.shoheiyamagiwa.constell.ui.theme.Purple500
-import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -177,33 +164,7 @@ private fun SignUpContent(
 
         AuthHeader(
             modifier = Modifier.fillMaxWidth(),
-            logo = {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().drawBehind {
-                    // Gradient for an entire background
-                    val radius = size.maxDimension / 1.5F
-                    val brush = Brush.radialGradient(
-                        colors = listOf(Purple500.copy(alpha = 0.1F), Color.Transparent),
-                        center = center,
-                        radius = radius
-                    )
-
-                    drawCircle(brush, radius)
-                }) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.drawBehind {
-                        // Gradient for the logo
-                        val radius = (size.maxDimension / 2.0F) + 16.dp.toPx()
-                        val brush = Brush.radialGradient(
-                            colors = listOf(Purple500.copy(alpha = 0.3F), Color.Transparent),
-                            center = center,
-                            radius = radius
-                        )
-
-                        drawCircle(brush, radius)
-                    }) {
-                        AppLogo()
-                    }
-                }
-            },
+            logo = { AuthLogoWithGradient() },
             title = stringResource(id = R.string.auth_text_signup_title),
             subtitle = stringResource(id = R.string.auth_text_signup_subtitle)
         )
@@ -297,37 +258,10 @@ private fun SignUpContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
-                onClick = onSubmit,
-                shape = RoundedCornerShape(size = 12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        val text = stringResource(id = R.string.auth_button_create_account)
-
-                        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-            }
+            AuthSubmitButton(
+                text = stringResource(id = R.string.auth_button_create_account),
+                onClick = onSubmit
+            )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -355,33 +289,7 @@ private fun SignInContent(
 
         AuthHeader(
             modifier = Modifier.fillMaxWidth(),
-            logo = {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().drawBehind {
-                    // Gradient for an entire background
-                    val radius = size.maxDimension / 1.5F
-                    val brush = Brush.radialGradient(
-                        colors = listOf(Purple500.copy(alpha = 0.1F), Color.Transparent),
-                        center = center,
-                        radius = radius
-                    )
-
-                    drawCircle(brush, radius)
-                }) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.drawBehind {
-                        // Gradient for the logo
-                        val radius = (size.maxDimension / 2.0F) + 16.dp.toPx()
-                        val brush = Brush.radialGradient(
-                            colors = listOf(Purple500.copy(alpha = 0.3F), Color.Transparent),
-                            center = center,
-                            radius = radius
-                        )
-
-                        drawCircle(brush, radius)
-                    }) {
-                        AppLogo()
-                    }
-                }
-            },
+            logo = { AuthLogoWithGradient() },
             title = stringResource(id = R.string.auth_text_signin_title),
             subtitle = stringResource(id = R.string.auth_text_signin_subtitle)
         )
@@ -459,29 +367,10 @@ private fun SignInContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
-                onClick = onSubmit,
-                shape = RoundedCornerShape(size = 12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        val text = stringResource(id = R.string.auth_button_sign_in)
-
-                        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-            }
+            AuthSubmitButton(
+                text = stringResource(id = R.string.auth_button_sign_in),
+                onClick = onSubmit
+            )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -507,33 +396,7 @@ private fun ForgotPasswordContent(
 
         AuthHeader(
             modifier = Modifier.fillMaxWidth(),
-            logo = {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth().drawBehind {
-                    // Gradient for an entire background
-                    val radius = size.maxDimension / 1.5F
-                    val brush = Brush.radialGradient(
-                        colors = listOf(Purple500.copy(alpha = 0.1F), Color.Transparent),
-                        center = center,
-                        radius = radius
-                    )
-
-                    drawCircle(brush, radius)
-                }) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.drawBehind {
-                        // Gradient for the logo
-                        val radius = (size.maxDimension / 2.0F) + 16.dp.toPx()
-                        val brush = Brush.radialGradient(
-                            colors = listOf(Purple500.copy(alpha = 0.3F), Color.Transparent),
-                            center = center,
-                            radius = radius
-                        )
-
-                        drawCircle(brush, radius)
-                    }) {
-                        AppLogo()
-                    }
-                }
-            },
+            logo = { AuthLogoWithGradient() },
             title = stringResource(id = R.string.auth_text_forgot_password_title),
             subtitle = stringResource(id = R.string.auth_text_forgot_password_subtitle)
         )
@@ -555,29 +418,10 @@ private fun ForgotPasswordContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
-                onClick = onSubmit,
-                shape = RoundedCornerShape(size = 12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Box(modifier = Modifier.fillMaxSize().background(Brush.horizontalGradient(colors = listOf(Blue600, Purple600))), contentAlignment = Alignment.Center) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        val text = stringResource(id = R.string.auth_button_send_reset_link)
-
-                        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-            }
+            AuthSubmitButton(
+                text = stringResource(id = R.string.auth_button_send_reset_link),
+                onClick = onSubmit
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
