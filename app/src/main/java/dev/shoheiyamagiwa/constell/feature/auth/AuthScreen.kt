@@ -65,8 +65,6 @@ public fun AuthScreen(
                 is AuthUiEvent.PasswordResetEmailSent -> {
                     // TODO: Show success message/alert
                 }
-
-                else -> {}
             }
         }
     }
