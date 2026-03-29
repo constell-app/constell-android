@@ -229,54 +229,88 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
     public fun submit() {
         when (val state = _uiState.value) {
             is AuthUiState.SignUp -> {
+                val validatedDisplayName = state.displayName.validate(state.displayName.value)
+                val validatedEmail = state.email.validate(state.email.value)
+                val validatedPassword = state.password.validate(state.password.value)
+                val validatedConfirmPassword = state.confirmPassword.validate(state.confirmPassword.value, passwordValue = state.password.value)
+
+                if (validatedDisplayName.hasError() || validatedEmail.hasError() || validatedPassword.hasError() || validatedConfirmPassword.hasError()) {
+                    _uiState.value = state.copy(
+                        displayName = validatedDisplayName,
+                        email = validatedEmail,
+                        password = validatedPassword,
+                        confirmPassword = validatedConfirmPassword,
+                        errorResId = null
+                    )
+                    return
+                }
+
                 viewModelScope.launch {
                     try {
-                        if (state.password.value != state.confirmPassword.value) {
-                            throw AuthException.PasswordMismatch()
-                        }
-
                         if (authRepository !is WithEmail) {
                             throw AuthException.EmailAuthNotSupported()
                         }
 
-                        authRepository.signUpWithEmail(state.email.value, state.password.value)
+                        authRepository.signUpWithEmail(state.email.value, password = state.password.value)
                         // TODO: Set displayName property on the DB
 
                         _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToConfirmEmail(state.email.value))
                     } catch (e: Exception) {
-                        _uiState.value = state.copy(errorResId = handleError(e))
+                        _uiState.value = (uiState.value as? AuthUiState.SignUp)?.copy(errorResId = handleError(e)) ?: state.copy(errorResId = handleError(e))
                     }
                 }
             }
 
             is AuthUiState.SignIn -> {
+                val validatedEmail = state.email.validate(state.email.value)
+                val validatedPassword = state.password.validate(state.password.value)
+
+                if (validatedEmail.hasError() || validatedPassword.hasError()) {
+                    _uiState.value = state.copy(
+                        email = validatedEmail,
+                        password = validatedPassword,
+                        errorResId = null
+                    )
+                    return
+                }
+
                 viewModelScope.launch {
                     try {
                         if (authRepository !is WithEmail) {
                             throw AuthException.EmailAuthNotSupported()
                         }
 
-                        authRepository.signInWithEmail(state.email.value, state.password.value)
+                        authRepository.signInWithEmail(email = state.email.value, password = state.password.value)
 
                         _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToHome)
                     } catch (e: Exception) {
-                        _uiState.value = state.copy(errorResId = handleError(e))
+                        _uiState.value = (uiState.value as? AuthUiState.SignIn)?.copy(errorResId = handleError(e)) ?: state.copy(errorResId = handleError(e))
                     }
                 }
             }
 
             is AuthUiState.ForgotPassword -> {
+                val validatedEmail = state.email.validate(state.email.value)
+
+                if (validatedEmail.hasError()) {
+                    _uiState.value = state.copy(
+                        email = validatedEmail,
+                        errorResId = null
+                    )
+                    return
+                }
+
                 viewModelScope.launch {
                     try {
                         if (authRepository !is WithEmail) {
                             throw AuthException.EmailAuthNotSupported()
                         }
 
-                        authRepository.requestPasswordReset(state.email.value)
+                        authRepository.requestPasswordReset(email = state.email.value)
 
                         _uiEventSharedFlow.emit(value = AuthUiEvent.PasswordResetEmailSent)
                     } catch (e: Exception) {
-                        _uiState.value = state.copy(errorResId = handleError(e))
+                        _uiState.value = (uiState.value as? AuthUiState.ForgotPassword)?.copy(errorResId = handleError(e)) ?: state.copy(errorResId = handleError(e))
                     }
                 }
             }
