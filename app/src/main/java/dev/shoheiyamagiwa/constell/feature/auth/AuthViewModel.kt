@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
-public sealed class FormField(val value: String = "", @param:StringRes open val errorMessageResId: Int? = null) {
+public sealed class FormField(val value: String = "", @get:StringRes open val errorMessageResId: Int? = null) {
     /**
      * Validate the value of the form field and return a new instance of the form field with the updated value and error message
      */
