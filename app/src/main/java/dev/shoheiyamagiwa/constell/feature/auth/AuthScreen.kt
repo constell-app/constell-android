@@ -60,7 +60,10 @@ import dev.shoheiyamagiwa.constell.ui.theme.Purple500
 import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 
 @Composable
-public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewModelFactory)) {
+public fun AuthScreen(
+    viewModel: AuthViewModel = viewModel(factory = authViewModelFactory),
+    onLoginSuccess: () -> Unit = {}
+) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     val currentDisplayName = when (val state = screenState) {
@@ -102,7 +105,7 @@ public fun AuthScreen(viewModel: AuthViewModel = viewModel(factory = authViewMod
     }
 
     fun onSubmit() {
-        viewModel.submit()
+        viewModel.submit(onSuccess = onLoginSuccess)
     }
 
     LaunchedEffect(key1 = Unit) {

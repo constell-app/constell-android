@@ -1,12 +1,15 @@
 [versions]
 agp = "9.1.0"
+bom = "3.4.1"
 coreKtx = "1.10.1"
+coreSplashscreen = "1.2.0"
+datastorePreferences = "1.2.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-koin = "4.2.0"
-koinBom = "4.2.0"
-koin-plugin = "0.4.0"
+koin = "4.2.0-RC2"
+koinBom = "4.2.0-RC2"
+kotlinxSerializationJson = "1.10.0"
 ktorClientCore = "3.4.1"
 ktorClientCio = "3.4.1"
 lifecycleRuntimeKtx = "2.6.1"
@@ -14,12 +17,23 @@ activityCompose = "1.8.0"
 kotlin = "2.2.10"
 composeBom = "2024.09.00"
 lifecycleViewmodelCompose = "2.10.0"
+navigationCompose = "2.9.7"
 uiTextGoogleFonts = "1.10.4"
 
 [libraries]
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastorePreferences" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-dynamic-features-fragment = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navigationCompose" }
+androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigationCompose" }
+androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationCompose" }
+androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationCompose" }
+auth-kt = { module = "io.github.jan-tennert.supabase:auth-kt" }
+bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -38,11 +52,12 @@ koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
+postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-plugin" }

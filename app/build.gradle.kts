@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.koin.compiler)
+
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -60,15 +61,37 @@ dependencies {
     implementation(libs.androidx.compose.ui.text.google.fonts)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.navigation.dynamic.features.fragment)
+    androidTestImplementation(libs.androidx.navigation.testing)
+
+    // JSON serialization library
+    implementation(libs.kotlinx.serialization.json)
+
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.core)
-    implementation(libs.koin.annotations)
 
     // Ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
+
+    // Supabase
+    implementation(platform(libs.bom))
+    implementation(libs.postgrest.kt)
+    implementation(libs.auth.kt)
+    implementation(libs.realtime.kt)
+
+    // Data Store
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
+
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
 }
