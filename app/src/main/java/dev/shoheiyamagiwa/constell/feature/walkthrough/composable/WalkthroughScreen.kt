@@ -46,18 +46,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.feature.walkthrough.WalkthroughViewModel
-import dev.shoheiyamagiwa.constell.feature.walkthrough.walkthroughViewModelFactory
 import dev.shoheiyamagiwa.constell.ui.theme.Blue600
 import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 import dev.shoheiyamagiwa.constell.ui.theme.Slate400
 import dev.shoheiyamagiwa.constell.ui.theme.Slate950
 import kotlinx.coroutines.launch
 
+import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
-public fun WalkthroughScreen(modifier: Modifier = Modifier, viewModel: WalkthroughViewModel = viewModel(factory = walkthroughViewModelFactory), onSkip: () -> Unit, onFinish: () -> Unit) {
+public fun WalkthroughScreen(modifier: Modifier = Modifier, viewModel: WalkthroughViewModel = koinViewModel(), onSkip: () -> Unit, onFinish: () -> Unit) {
     val currentStep by viewModel.currentStep.collectAsStateWithLifecycle()
     val totalSteps = viewModel.getTotalSteps()
 

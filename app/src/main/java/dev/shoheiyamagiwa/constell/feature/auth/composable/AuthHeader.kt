@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.composable.AppLogo
 import dev.shoheiyamagiwa.constell.ui.theme.Slate400
 
@@ -32,7 +34,7 @@ public fun AuthHeader(modifier: Modifier = Modifier, logo: @Composable () -> Uni
 private fun AuthHeaderPreview() {
     AuthHeader(
         logo = { AppLogo() },
-        title = "Welcome to Constell",
-        subtitle = "Your AI Second Brain"
+        title = stringResource(id = R.string.auth_text_signup_title),
+        subtitle = stringResource(id = R.string.auth_text_signup_subtitle)
     )
 }

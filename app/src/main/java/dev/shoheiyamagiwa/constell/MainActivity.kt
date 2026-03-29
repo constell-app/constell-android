@@ -103,7 +103,19 @@ private fun NavigationDeclaration(
             )
         }
         composable<Auth> {
-            AuthScreen(onLoginSuccess = onLoginSuccess)
+            AuthScreen(
+                onNavigateToHome = {
+                    navController.navigate(route = Home) {
+                        popUpTo(route = Auth) { inclusive = true }
+                    }
+                },
+                onNavigateToConfirmEmail = {
+                    // TODO: Implement this logic
+//                    navController.navigate(route = ConfirmEmail) {
+//                        popUpTo(route = Auth) { inclusive = true }
+//                    }
+                }
+            )
         }
     }
 }

@@ -66,14 +66,3 @@ public class WalkthroughViewModel : ViewModel() {
         return WALKTHROUGH_STEPS.size
     }
 }
-
-/**
- * A factory function to create WalkthroughViewModel instances
- *
- * @author shohei-yamagiwa
- */
-public val walkthroughViewModelFactory = viewModelFactory() {
-    initializer {
-        WalkthroughViewModel()
-    }
-}
