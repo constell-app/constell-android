@@ -104,7 +104,6 @@ private fun AuthContent(
     onChangeToForgotPassword: () -> Unit,
     onSubmit: () -> Unit
 ) {
-    // TODO: Getting UI texts from string resources
     Background(alignment = Alignment.Center) {
         when (uiState) {
             AuthUiState.Loading -> {
