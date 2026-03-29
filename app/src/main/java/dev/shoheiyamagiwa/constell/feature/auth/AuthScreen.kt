@@ -1,5 +1,9 @@
 package dev.shoheiyamagiwa.constell.feature.auth
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.composable.Background
 import dev.shoheiyamagiwa.constell.composable.CustomTextField
+import dev.shoheiyamagiwa.constell.composable.ErrorAlert
 import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthHeader
 import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthLogoWithGradient
 import dev.shoheiyamagiwa.constell.feature.auth.composable.AuthSubmitButton
@@ -50,6 +55,7 @@ public fun AuthScreen(
     onNavigateToHome: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val successMessage = stringResource(id = R.string.auth_success_password_reset_email_sent)
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEvent.collect { event ->
@@ -63,7 +69,7 @@ public fun AuthScreen(
                 }
 
                 is AuthUiEvent.PasswordResetEmailSent -> {
-                    // TODO: Show success message/alert
+                    // TODO: Navigate to password reset email sent screen
                 }
             }
         }
@@ -176,27 +182,19 @@ private fun SignUpContent(
             onChangeToSignUp = {}
         )
 
-        // TODO: I need to handle error messages in AuthViewModel
-//        val errorMessages = listOfNotNull(
-//            uiState.displayName.errorMessageResId,
-//            uiState.email.errorMessageResId,
-//            uiState.password.errorMessageResId,
-//            uiState.confirmPassword.errorMessageResId
-//        ).map { stringResource(id = it) }
-//
-//        AnimatedVisibility(
-//            visible = errorMessages.isNotEmpty(),
-//            enter = expandVertically(animationSpec = spring()),
-//            exit = shrinkVertically(animationSpec = spring())
-//        ) {
-//            Column {
-//                Spacer(modifier = Modifier.height(24.dp))
-//                ErrorAlert(
-//                    message = errorMessages.firstOrNull() ?: "",
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//            }
-//        }
+        AnimatedVisibility(
+            visible = uiState.errorResId != null,
+            enter = expandVertically(animationSpec = spring()),
+            exit = shrinkVertically(animationSpec = spring())
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(24.dp))
+                ErrorAlert(
+                    message = uiState.errorResId?.let { stringResource(id = it) } ?: "",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -301,25 +299,19 @@ private fun SignInContent(
             onChangeToSignUp = onTabChangeToSignUp
         )
 
-        // TODO: I need to handle error messages in AuthViewModel
-//        val errorMessages = listOfNotNull(
-//            uiState.email.errorMessageResId,
-//            uiState.password.errorMessageResId
-//        ).map { stringResource(id = it) }
-//
-//        AnimatedVisibility(
-//            visible = errorMessages.isNotEmpty(),
-//            enter = expandVertically(animationSpec = spring()),
-//            exit = shrinkVertically(animationSpec = spring())
-//        ) {
-//            Column {
-//                Spacer(modifier = Modifier.height(24.dp))
-//                ErrorAlert(
-//                    message = errorMessages.firstOrNull() ?: "",
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//            }
-//        }
+        AnimatedVisibility(
+            visible = uiState.errorResId != null,
+            enter = expandVertically(animationSpec = spring()),
+            exit = shrinkVertically(animationSpec = spring())
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(24.dp))
+                ErrorAlert(
+                    message = uiState.errorResId?.let { stringResource(id = it) } ?: "",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -402,6 +394,20 @@ private fun ForgotPasswordContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         // No TabSwitcher here as it's a sub-flow of SignIn
+
+        AnimatedVisibility(
+            visible = uiState.errorResId != null,
+            enter = expandVertically(animationSpec = spring()),
+            exit = shrinkVertically(animationSpec = spring())
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(24.dp))
+                ErrorAlert(
+                    message = uiState.errorResId?.let { stringResource(id = it) } ?: "",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
 
         Column(modifier = Modifier.fillMaxWidth()) {
             // Email

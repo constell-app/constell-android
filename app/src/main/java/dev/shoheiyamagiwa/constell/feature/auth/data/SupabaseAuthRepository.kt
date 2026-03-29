@@ -1,7 +1,10 @@
 package dev.shoheiyamagiwa.constell.feature.auth.data
 
+import dev.shoheiyamagiwa.constell.feature.auth.AuthException
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.exception.AuthErrorCode
+import io.github.jan.supabase.auth.exception.AuthRestException
 import io.github.jan.supabase.auth.providers.Github
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
@@ -20,21 +23,43 @@ public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) 
     }
 
     override suspend fun signUpWithEmail(email: String, password: String) {
-        supabaseClient.auth.signUpWith(provider = Email, config = { // TODO: redirect url
-            this.email = email
-            this.password = password
-        })
+        try {
+            supabaseClient.auth.signUpWith(provider = Email, config = { // TODO: redirect url
+                this.email = email
+                this.password = password
+            })
+        } catch (e: AuthRestException) {
+            throw when (e.errorCode) {
+                AuthErrorCode.UserAlreadyExists -> AuthException.UserAlreadyExists()
+                else -> e
+            }
+        }
     }
 
     override suspend fun signInWithEmail(email: String, password: String) {
-        supabaseClient.auth.signInWith(provider = Email, config = {
-            this.email = email
-            this.password = password
-        })
+        try {
+            supabaseClient.auth.signInWith(provider = Email, config = {
+                this.email = email
+                this.password = password
+            })
+        } catch (e: AuthRestException) {
+            throw when (e.errorCode) {
+                AuthErrorCode.InvalidCredentials -> AuthException.InvalidCredentials()
+                AuthErrorCode.UserNotFound -> AuthException.UserNotFound()
+                else -> e
+            }
+        }
     }
 
     override suspend fun requestPasswordReset(email: String) {
-        supabaseClient.auth.resetPasswordForEmail(email) // TODO: redirect url
+        try {
+            supabaseClient.auth.resetPasswordForEmail(email) // TODO: redirect url
+        } catch (e: AuthRestException) {
+            throw when (e.errorCode) {
+                AuthErrorCode.UserNotFound -> AuthException.UserNotFound()
+                else -> e
+            }
+        }
     }
 
     override suspend fun updatePassword(newPassword: String) {

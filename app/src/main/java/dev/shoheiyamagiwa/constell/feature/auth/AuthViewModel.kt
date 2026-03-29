@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 public sealed class FormField(val value: String = "", @param:StringRes open val errorMessageResId: Int? = null) {
     /**
@@ -82,20 +83,24 @@ public sealed class FormField(val value: String = "", @param:StringRes open val 
 
 public sealed class AuthUiState {
     public object Loading : AuthUiState()
+
     public data class SignUp(
         val displayName: FormField.DisplayNameField = FormField.DisplayNameField(),
         val email: FormField.EmailField = FormField.EmailField(),
         val password: FormField.PasswordField = FormField.PasswordField(),
-        val confirmPassword: FormField.ConfirmPasswordField = FormField.ConfirmPasswordField()
+        val confirmPassword: FormField.ConfirmPasswordField = FormField.ConfirmPasswordField(),
+        @param:StringRes val errorResId: Int? = null,
     ) : AuthUiState()
 
     public data class SignIn(
         val email: FormField.EmailField = FormField.EmailField(),
-        val password: FormField.PasswordField = FormField.PasswordField()
+        val password: FormField.PasswordField = FormField.PasswordField(),
+        @param:StringRes val errorResId: Int? = null,
     ) : AuthUiState()
 
     public data class ForgotPassword(
-        val email: FormField.EmailField = FormField.EmailField()
+        val email: FormField.EmailField = FormField.EmailField(),
+        @param:StringRes val errorResId: Int? = null,
     ) : AuthUiState()
 }
 
@@ -231,7 +236,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
                         _uiEventChannel.send(element = AuthUiEvent.NavigateToConfirmEmail(state.email.value))
                     } catch (e: Exception) {
-                        // TODO: Handle error
+                        _uiState.value = state.copy(errorResId = handleError(e))
                     }
                 }
             }
@@ -247,7 +252,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
                         _uiEventChannel.send(element = AuthUiEvent.NavigateToHome)
                     } catch (e: Exception) {
-                        // TODO: Handle error
+                        _uiState.value = state.copy(errorResId = handleError(e))
                     }
                 }
             }
@@ -263,7 +268,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
                         _uiEventChannel.send(element = AuthUiEvent.PasswordResetEmailSent)
                     } catch (e: Exception) {
-                        // TODO: Handle error
+                        _uiState.value = state.copy(errorResId = handleError(e))
                     }
                 }
             }
@@ -274,23 +279,35 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
         }
     }
 
+    private fun handleError(e: Exception): Int {
+        return when (e) {
+            is AuthException.EmailAuthNotSupported -> R.string.auth_error_email_not_supported
+            is AuthException.PasswordMismatch -> R.string.auth_error_confirm_password_mismatch
+            is AuthException.InvalidCredentials -> R.string.auth_error_invalid_credentials
+            is AuthException.UserNotFound -> R.string.auth_error_user_not_found
+            is AuthException.UserAlreadyExists -> R.string.auth_error_user_already_exists
+            is UnknownHostException -> R.string.auth_error_network
+            else -> R.string.auth_error_unknown
+        }
+    }
+
     public fun updateDisplayName(value: String) {
         val currentState = _uiState.value
         if (currentState is AuthUiState.SignUp) {
-            _uiState.value = currentState.copy(displayName = currentState.displayName.validate(value))
+            _uiState.value = currentState.copy(displayName = currentState.displayName.validate(value), errorResId = null)
         }
     }
 
     public fun updateEmail(value: String) {
         val currentState = _uiState.value
         if (currentState is AuthUiState.SignUp) {
-            _uiState.value = currentState.copy(email = currentState.email.validate(value))
+            _uiState.value = currentState.copy(email = currentState.email.validate(value), errorResId = null)
         }
         if (currentState is AuthUiState.SignIn) {
-            _uiState.value = currentState.copy(email = currentState.email.validate(value))
+            _uiState.value = currentState.copy(email = currentState.email.validate(value), errorResId = null)
         }
         if (currentState is AuthUiState.ForgotPassword) {
-            _uiState.value = currentState.copy(email = currentState.email.validate(value))
+            _uiState.value = currentState.copy(email = currentState.email.validate(value), errorResId = null)
         }
     }
 
@@ -301,11 +318,12 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
             val updatedConfirmPassword = currentState.confirmPassword.validate(currentState.confirmPassword.value, value)
             _uiState.value = currentState.copy(
                 password = updatedPassword,
-                confirmPassword = updatedConfirmPassword
+                confirmPassword = updatedConfirmPassword,
+                errorResId = null
             )
         }
         if (currentState is AuthUiState.SignIn) {
-            _uiState.value = currentState.copy(password = currentState.password.validate(value))
+            _uiState.value = currentState.copy(password = currentState.password.validate(value), errorResId = null)
         }
     }
 
@@ -313,7 +331,8 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
         val currentState = _uiState.value
         if (currentState is AuthUiState.SignUp) {
             _uiState.value = currentState.copy(
-                confirmPassword = currentState.confirmPassword.validate(value, currentState.password.value)
+                confirmPassword = currentState.confirmPassword.validate(value, currentState.password.value),
+                errorResId = null
             )
         }
     }
