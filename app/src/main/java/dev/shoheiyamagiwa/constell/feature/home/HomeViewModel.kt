@@ -2,8 +2,6 @@ package dev.shoheiyamagiwa.constell.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,11 +44,5 @@ public class HomeViewModel : ViewModel() {
                 _screenState.value = HomeScreenState.Error(exception = e) // Unreachable code for now
             }
         }
-    }
-}
-
-public val homeViewModelFactory = viewModelFactory {
-    initializer {
-        HomeViewModel()
     }
 }

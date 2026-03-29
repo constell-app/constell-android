@@ -8,14 +8,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.shoheiyamagiwa.constell.composable.Background
 import dev.shoheiyamagiwa.constell.feature.home.composable.ConstellationWorld
 import dev.shoheiyamagiwa.constell.feature.home.composable.extensions.dotBackground
 import dev.shoheiyamagiwa.constell.ui.theme.Slate600
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-public fun HomeScreen(viewModel: HomeViewModel = viewModel(factory = homeViewModelFactory)) {
+public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
@@ -29,7 +29,8 @@ public fun HomeScreen(viewModel: HomeViewModel = viewModel(factory = homeViewMod
             }
 
             is HomeScreenState.Default -> {
-                ConstellationWorld(nodeGap = 144.dp, edgeWidth = 2.dp, centerNodeTitle = "Next.js", onMainNodeClicked = { TODO() },
+                ConstellationWorld(
+                    nodeGap = 144.dp, edgeWidth = 2.dp, centerNodeTitle = "Next.js", onMainNodeClicked = { TODO() },
                     satelliteNodeTitles = listOf(
                         "React",
                         "Vercel",
