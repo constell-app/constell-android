@@ -110,7 +110,8 @@ fun CenterOrbitNode(
             textAlign = TextAlign.Center,
             lineHeight = fontHeight.sp,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(size * 0.1F)
         )
     }
 }
