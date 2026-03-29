@@ -124,13 +124,17 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
 
-            if (authRepository.isAuthenticated()) {
-                authRepository.refreshSession()
+            try {
+                if (authRepository.isAuthenticated()) {
+                    authRepository.refreshSession()
 
-                _uiEventChannel.send(element = AuthUiEvent.NavigateToHome)
-                return@launch
-            } else {
-                _uiState.value = AuthUiState.SignIn()
+                    _uiEventChannel.send(element = AuthUiEvent.NavigateToHome)
+                    return@launch
+                } else {
+                    _uiState.value = AuthUiState.SignIn()
+                }
+            } catch (_: Exception) {
+                _uiState.value = AuthUiState.SignIn() // Fail-safe
             }
         }
     }

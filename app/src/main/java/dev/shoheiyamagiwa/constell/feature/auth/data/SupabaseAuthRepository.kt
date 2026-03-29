@@ -19,7 +19,20 @@ public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) 
     }
 
     override suspend fun refreshSession() {
-        supabaseClient.auth.refreshCurrentSession()
+        try {
+            supabaseClient.auth.refreshCurrentSession()
+        } catch (e: Exception) {
+            if (e is AuthRestException) {
+                throw when (e.errorCode) {
+                    AuthErrorCode.SessionNotFound -> AuthException.SessionNotFound()
+                    AuthErrorCode.RefreshTokenNotFound -> AuthException.RefreshTokenNotFound()
+                    AuthErrorCode.RefreshTokenAlreadyUsed -> AuthException.RefreshTokenAlreadyUsed()
+                    else -> e
+                }
+            } else {
+                throw e // HttpRequestTimeoutException or HttpRequestException
+            }
+        }
     }
 
     override suspend fun signUpWithEmail(email: String, password: String) {
