@@ -12,12 +12,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,12 +42,36 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState()
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.initializeScreen()
+    val onAction: (HomeAction) -> Unit = remember(key1 = viewModel) {
+        { action ->
+            when (action) {
+                is HomeAction.SelectArticle -> viewModel.selectArticleById(articleId = action.id)
+                is HomeAction.SetShowDetails -> viewModel.setShowArticleDetails(action.show)
+                is HomeAction.Initialize -> viewModel.initializeScreen()
+            }
+        }
     }
 
+    LaunchedEffect(key1 = Unit) {
+        onAction(HomeAction.Initialize)
+    }
+
+    HomeScreenContent(
+        screenState = screenState,
+        sheetState = sheetState,
+        onAction = onAction
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+public fun HomeScreenContent(
+    screenState: HomeScreenState,
+    sheetState: SheetState,
+    onAction: (HomeAction) -> Unit
+) {
     Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
-        when (val currentState = screenState) {
+        when (screenState) {
             is HomeScreenState.Loading -> {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator()
@@ -53,79 +79,74 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             }
 
             is HomeScreenState.Default -> {
-                if (currentState.mainArticleNode == null) {
+                if (screenState.mainArticleNode == null) {
                     Text(text = "No articles found.")
                 } else {
-                    val mainNode = currentState.mainArticleNode
+                    val mainNode = screenState.mainArticleNode
+
                     ConstellationWorld(
                         nodeGap = 144.dp,
                         edgeWidth = 2.dp,
                         centerNodeTitle = mainNode.title,
                         onMainNodeClicked = {
-                            viewModel.setShowArticleDetails(true)
+                            onAction(HomeAction.SetShowDetails(show = true))
                         },
                         satelliteNodeTitles = mainNode.similarArticles.map { it.title },
-                        onSatelliteNodeClicked = { nodeId ->
-                            /* TODO */
+                        onSatelliteNodeClicked = { index ->
+                            mainNode.similarArticles.getOrNull(index)?.id?.let { id ->
+                                onAction(HomeAction.SelectArticle(id))
+                            }
                         },
-                        isFocusing = currentState.showArticleDetails
+                        isFocusing = screenState.showArticleDetails
                     )
 
-                    if (currentState.showArticleDetails) {
-                        ModalBottomSheet(
-                            onDismissRequest = { viewModel.setShowArticleDetails(false) },
+                    if (screenState.showArticleDetails) {
+                        ArticleDetailSheet(
+                            articleNode = mainNode,
                             sheetState = sheetState,
-                            containerColor = Slate800,
-                            contentColor = Slate100,
-                            tonalElevation = 8.dp
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 24.dp, end = 24.dp, bottom = 48.dp)
-                            ) {
-                                Text(
-                                    text = mainNode.title,
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                                Spacer(modifier = Modifier.height(12.dp))
-                                FlowRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    maxItemsInEachRow = 5
-                                ) {
-                                    mainNode.tags.forEach { tag ->
-                                        Surface(
-                                            modifier = Modifier.padding(end = 8.dp, bottom = 8.dp),
-                                            color = Slate600,
-                                            shape = RoundedCornerShape(16.dp)
-                                        ) {
-                                            Text(
-                                                text = "#$tag",
-                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                                                fontSize = 12.sp,
-                                                color = Slate100
-                                            )
-                                        }
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(
-                                    text = mainNode.description,
-                                    fontSize = 16.sp,
-                                    lineHeight = 24.sp,
-                                    color = Slate400
-                                )
-                            }
-                        }
+                            onDismissRequest = { onAction(HomeAction.SetShowDetails(show = false)) }
+                        )
                     }
                 }
             }
 
             is HomeScreenState.Error -> {
-                Text(text = "Error: ${currentState.exception.message}")
+                Text(text = "Error: ${screenState.exception.message}")
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+public fun ArticleDetailSheet(
+    articleNode: ArticleNode,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        containerColor = Slate800,
+        contentColor = Slate100,
+        tonalElevation = 8.dp
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 48.dp)) {
+            Text(text = articleNode.title, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FlowRow(modifier = Modifier.fillMaxWidth(), maxItemsInEachRow = 5) {
+                articleNode.tags.forEach { tag ->
+                    Surface(modifier = Modifier.padding(end = 8.dp, bottom = 8.dp), color = Slate600, shape = RoundedCornerShape(size = 16.dp)) {
+                        Text(text = "#$tag", modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp), fontSize = 12.sp, color = Slate100)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = articleNode.description, fontSize = 16.sp, lineHeight = 24.sp, color = Slate400)
         }
     }
 }
