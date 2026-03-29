@@ -103,12 +103,13 @@ public sealed class AuthUiState {
         val email: FormField.EmailField = FormField.EmailField(),
         @param:StringRes val errorResId: Int? = null,
     ) : AuthUiState()
+
+    public object PasswordResetEmailSent : AuthUiState()
 }
 
 public sealed interface AuthUiEvent {
     public data object NavigateToHome : AuthUiEvent
     public data class NavigateToConfirmEmail(val email: String) : AuthUiEvent
-    public data object PasswordResetEmailSent : AuthUiEvent // TODO: Implement password reset feature and use this
 }
 
 public class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
@@ -168,6 +169,10 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                     email = currentState.email
                 )
             }
+
+            is AuthUiState.PasswordResetEmailSent -> {
+                _uiState.value = AuthUiState.SignUp()
+            }
         }
     }
 
@@ -196,6 +201,10 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                     email = currentState.email
                 )
             }
+
+            is AuthUiState.PasswordResetEmailSent -> {
+                _uiState.value = AuthUiState.SignIn()
+            }
         }
     }
 
@@ -222,6 +231,10 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
             is AuthUiState.ForgotPassword -> {
                 return
+            }
+
+            is AuthUiState.PasswordResetEmailSent -> {
+                _uiState.value = AuthUiState.ForgotPassword()
             }
         }
     }
@@ -342,7 +355,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
                 authRepository.requestPasswordReset(email = state.email.value)
 
-                _uiEventSharedFlow.emit(value = AuthUiEvent.PasswordResetEmailSent)
+                _uiState.value = AuthUiState.PasswordResetEmailSent
             } catch (e: Exception) {
                 when (val currentState = uiState.value) {
                     is AuthUiState.ForgotPassword -> {

@@ -70,10 +70,6 @@ public fun AuthScreen(
                 is AuthUiEvent.NavigateToHome -> {
                     onNavigateToHome()
                 }
-
-                is AuthUiEvent.PasswordResetEmailSent -> {
-                    // TODO: Navigate to password reset email sent screen
-                }
             }
         }
     }
@@ -138,6 +134,12 @@ private fun AuthContent(
                     onUpdateEmail = onUpdateEmail,
                     onTabChangeToSignIn = onTabChangeToSignIn,
                     onSubmit = onSubmit
+                )
+            }
+
+            AuthUiState.PasswordResetEmailSent -> {
+                PasswordResetEmailSentContent(
+                    onReturnToSignIn = onTabChangeToSignIn
                 )
             }
         }
@@ -443,6 +445,38 @@ private fun ForgotPasswordContent(
     }
 }
 
+@Composable
+private fun PasswordResetEmailSentContent(
+    onReturnToSignIn: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.height(48.dp))
+
+        AuthHeader(
+            modifier = Modifier.fillMaxWidth(),
+            logo = { AuthLogoWithGradient() },
+            title = stringResource(id = R.string.auth_text_password_reset_email_sent_title),
+            subtitle = stringResource(id = R.string.auth_text_password_reset_email_sent_subtitle)
+        )
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        AuthSubmitButton(
+            text = stringResource(id = R.string.auth_button_return_to_signin),
+            onClick = onReturnToSignIn
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
 @Preview
 @Composable
 private fun AuthContentPreview_Loading() {
@@ -509,6 +543,16 @@ private fun AuthContentPreview_ForgotPassword() {
             onUpdateEmail = {},
             onTabChangeToSignIn = {},
             onSubmit = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AuthContentPreview_PasswordResetEmailSent() {
+    Background(alignment = Alignment.Center) {
+        PasswordResetEmailSentContent(
+            onReturnToSignIn = {}
         )
     }
 }

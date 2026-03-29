@@ -34,6 +34,9 @@
     <string name="auth_button_send_reset_link">送信する</string>
     <string name="auth_button_back_to_signin">ログインに戻る</string>
     <string name="auth_success_password_reset_email_sent">パスワード再設定用のメールを送信しました</string>
+    <string name="auth_text_password_reset_email_sent_title">メールを送信しました</string>
+    <string name="auth_text_password_reset_email_sent_subtitle">ご登録いただいたメールアドレス宛に、パスワード再設定用のリンクを送信しました。メールをご確認ください。</string>
+    <string name="auth_button_return_to_signin">ログインへ戻る</string>
     <string name="auth_error_unknown">予期せぬエラーが発生しました。しばらくしてからもう一度お試しください。</string>
     <string name="auth_error_network">ネットワークに接続できません。通信環境を確認してください。</string>
     <string name="auth_error_invalid_credentials">メールアドレスまたはパスワードが正しくありません。</string>
