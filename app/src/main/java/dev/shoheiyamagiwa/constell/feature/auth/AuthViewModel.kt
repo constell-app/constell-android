@@ -364,6 +364,9 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
             is AuthException.InvalidCredentials -> R.string.auth_error_invalid_credentials
             is AuthException.UserNotFound -> R.string.auth_error_user_not_found
             is AuthException.UserAlreadyExists -> R.string.auth_error_user_already_exists
+            is AuthException.SessionNotFound -> R.string.auth_error_session_not_found
+            is AuthException.RefreshTokenNotFound -> R.string.auth_error_refresh_token_not_found
+            is AuthException.RefreshTokenAlreadyUsed -> R.string.auth_error_refresh_token_already_used
             is UnknownHostException -> R.string.auth_error_network
             else -> R.string.auth_error_unknown
         }

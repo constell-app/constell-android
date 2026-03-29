@@ -40,4 +40,7 @@
     <string name="auth_error_user_not_found">No account found with this email address.</string>
     <string name="auth_error_user_already_exists">This email address is already registered.</string>
     <string name="auth_error_email_not_supported">Email authentication is not currently supported.</string>
+    <string name="auth_error_session_not_found">Session expired. Please sign in again.</string>
+    <string name="auth_error_refresh_token_not_found">Authentication details not found. Please sign in again.</string>
+    <string name="auth_error_refresh_token_already_used">This account is already authenticated elsewhere. Please sign in again.</string>
 </resources>

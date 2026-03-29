@@ -40,4 +40,7 @@
     <string name="auth_error_user_not_found">このメールアドレスは登録されていません。</string>
     <string name="auth_error_user_already_exists">このメールアドレスは既に登録されています。</string>
     <string name="auth_error_email_not_supported">現在、メールによる認証はサポートされていません。</string>
+    <string name="auth_error_session_not_found">セッションの有効期限が切れました。再度ログインしてください。</string>
+    <string name="auth_error_refresh_token_not_found">認証情報が見つかりません。再度ログインしてください。</string>
+    <string name="auth_error_refresh_token_already_used">このアカウントは既に別の場所で認証されています。再度ログインしてください。</string>
 </resources>
