@@ -15,12 +15,10 @@ public data class ArticleNode(
     val similarArticles: List<ArticleNode>
 )
 
-public data class CenterNode(val id: String, val title: String)
-
 public sealed class HomeScreenState {
     object Loading : HomeScreenState()
-    class Default(val mainArticleNode: ArticleNode?, val showArticleDetails: Boolean) : HomeScreenState()
-    class Error(val exception: Exception) : HomeScreenState()
+    data class Default(val mainArticleNode: ArticleNode?, val showArticleDetails: Boolean) : HomeScreenState()
+    data class Error(val exception: Exception) : HomeScreenState()
 }
 
 public class HomeViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
@@ -43,7 +41,7 @@ public class HomeViewModel(private val articleRepository: ArticleRepository) : V
                     return@launch
                 }
 
-                // For now, take the first article as the main node
+                // FIXME: For now, take the first article as the main node
                 val mainArticleDto = articles.first()
 
                 // Find similar articles based on connections
@@ -74,6 +72,16 @@ public class HomeViewModel(private val articleRepository: ArticleRepository) : V
             } catch (e: Exception) {
                 _screenState.value = HomeScreenState.Error(exception = e)
             }
+        }
+    }
+
+    /**
+     * Show or hide article details.
+     */
+    public fun setShowArticleDetails(show: Boolean) {
+        val currentState = _screenState.value
+        if (currentState is HomeScreenState.Default) {
+            _screenState.value = currentState.copy(showArticleDetails = show)
         }
     }
 }
