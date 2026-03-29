@@ -2,22 +2,28 @@ package dev.shoheiyamagiwa.constell.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import dev.shoheiyamagiwa.constell.feature.home.data.ArticleRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-public data class ArticleNode(val id: String, val title: String, val tags: List<String>, val description: String, val similarArticles: List<ArticleNode>)
+public data class ArticleNode(
+    val id: String,
+    val title: String,
+    val tags: List<String>,
+    val description: String,
+    val similarArticles: List<ArticleNode>
+)
 
 public data class CenterNode(val id: String, val title: String)
 
 public sealed class HomeScreenState {
     object Loading : HomeScreenState()
-    class Default(val mainArticleNode: ArticleNode, val showArticleDetails: Boolean) : HomeScreenState()
+    class Default(val mainArticleNode: ArticleNode?, val showArticleDetails: Boolean) : HomeScreenState()
     class Error(val exception: Exception) : HomeScreenState()
 }
 
-public class HomeViewModel : ViewModel() {
+public class HomeViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
     private val _screenState = MutableStateFlow<HomeScreenState>(value = HomeScreenState.Loading)
     public val screenState = _screenState.asStateFlow()
 
@@ -29,19 +35,44 @@ public class HomeViewModel : ViewModel() {
             _screenState.value = HomeScreenState.Loading
 
             try {
-                // FIXME: These are just mock data so we must replace them with actual data
-                val article1 = ArticleNode(id = "1", title = "Kotlin", tags = listOf("Backend", "Android"), description = "Kotlin is a programming language.", similarArticles = listOf())
-                val article2 = ArticleNode(id = "2", title = "Flutter", tags = listOf("Frontend", "Mobile"), description = "Flutter is a cross-platform mobile application framework.", similarArticles = listOf())
-                val article3 = ArticleNode(id = "3", title = "Dart", tags = listOf("Backend", "Web"), description = "Dart is a programming language.", similarArticles = listOf())
-                val article4 = ArticleNode(id = "4", title = "Java", tags = listOf("Backend", "Android"), description = "Java is a programming language.", similarArticles = listOf())
-                val article5 = ArticleNode(id = "5", title = "JavaScript", tags = listOf("Frontend", "Web"), description = "JavaScript is a programming language.", similarArticles = listOf())
-                val mainArticleNode = ArticleNode(id = "0", title = "React", tags = listOf("Frontend", "Web"), description = "React is a Web application framework.", similarArticles = listOf(article1, article2, article3, article4, article5))
+                val articles = articleRepository.getArticles()
+                val connections = articleRepository.getArticleConnections()
 
-                delay(timeMillis = 1000L)
+                if (articles.isEmpty()) {
+                    _screenState.value = HomeScreenState.Default(mainArticleNode = null, showArticleDetails = false)
+                    return@launch
+                }
+
+                // For now, take the first article as the main node
+                val mainArticleDto = articles.first()
+
+                // Find similar articles based on connections
+                val similarArticleIds = connections
+                    .filter { it.sourceArticleId == mainArticleDto.id }
+                    .map { it.targetArticleId }
+                    .toSet()
+
+                val similarArticles = articles.filter { it.id in similarArticleIds }.map { dto ->
+                    ArticleNode(
+                        id = dto.id,
+                        title = dto.title,
+                        tags = dto.tags,
+                        description = dto.summary,
+                        similarArticles = emptyList()
+                    )
+                }
+
+                val mainArticleNode = ArticleNode(
+                    id = mainArticleDto.id,
+                    title = mainArticleDto.title,
+                    tags = mainArticleDto.tags,
+                    description = mainArticleDto.summary,
+                    similarArticles = similarArticles
+                )
 
                 _screenState.value = HomeScreenState.Default(mainArticleNode = mainArticleNode, showArticleDetails = false)
             } catch (e: Exception) {
-                _screenState.value = HomeScreenState.Error(exception = e) // Unreachable code for now
+                _screenState.value = HomeScreenState.Error(exception = e)
             }
         }
     }

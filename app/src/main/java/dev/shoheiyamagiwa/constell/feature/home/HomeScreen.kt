@@ -29,21 +29,22 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             }
 
             is HomeScreenState.Default -> {
-                ConstellationWorld(
-                    nodeGap = 144.dp, edgeWidth = 2.dp, centerNodeTitle = "Next.js", onMainNodeClicked = { TODO() },
-                    satelliteNodeTitles = listOf(
-                        "React",
-                        "Vercel",
-                        "Server Component",
-                        "v0.dev",
-                        "Tailwind CSS",
-                        "Image Optimization",
-                    ),
-                    onSatelliteNodeClicked = { nodeId ->
-
-                    },
-                    isFocusing = false // FIXME Temporary marked as false
-                )
+                if (currentState.mainArticleNode == null) {
+                    Text(text = "No articles found.")
+                } else {
+                    val mainNode = currentState.mainArticleNode
+                    ConstellationWorld(
+                        nodeGap = 144.dp,
+                        edgeWidth = 2.dp,
+                        centerNodeTitle = mainNode.title,
+                        onMainNodeClicked = { /* TODO */ },
+                        satelliteNodeTitles = mainNode.similarArticles.map { it.title },
+                        onSatelliteNodeClicked = { nodeId ->
+                            /* TODO */
+                        },
+                        isFocusing = false // FIXME Temporary marked as false
+                    )
+                }
             }
 
             is HomeScreenState.Error -> {
