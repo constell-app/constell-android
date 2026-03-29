@@ -7,10 +7,11 @@ import androidx.lifecycle.viewModelScope
 import dev.shoheiyamagiwa.constell.R
 import dev.shoheiyamagiwa.constell.feature.auth.data.AuthRepository
 import dev.shoheiyamagiwa.constell.feature.auth.data.WithEmail
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
@@ -114,8 +115,11 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
     private val _uiState = MutableStateFlow<AuthUiState>(value = AuthUiState.Loading)
     public val uiState = _uiState.asStateFlow()
 
-    private val _uiEventChannel = Channel<AuthUiEvent>()
-    public val uiEvent = _uiEventChannel.receiveAsFlow()
+    private val _uiEventSharedFlow = MutableSharedFlow<AuthUiEvent>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    public val uiEvent = _uiEventSharedFlow.asSharedFlow()
 
     /**
      * Validate a login session to restore the previous user data if possible
@@ -128,7 +132,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                 if (authRepository.isAuthenticated()) {
                     authRepository.refreshSession()
 
-                    _uiEventChannel.send(element = AuthUiEvent.NavigateToHome)
+                    _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToHome)
                     return@launch
                 } else {
                     _uiState.value = AuthUiState.SignIn()
@@ -238,7 +242,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
                         authRepository.signUpWithEmail(state.email.value, state.password.value)
                         // TODO: Set displayName property on the DB
 
-                        _uiEventChannel.send(element = AuthUiEvent.NavigateToConfirmEmail(state.email.value))
+                        _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToConfirmEmail(state.email.value))
                     } catch (e: Exception) {
                         _uiState.value = state.copy(errorResId = handleError(e))
                     }
@@ -254,7 +258,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
                         authRepository.signInWithEmail(state.email.value, state.password.value)
 
-                        _uiEventChannel.send(element = AuthUiEvent.NavigateToHome)
+                        _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToHome)
                     } catch (e: Exception) {
                         _uiState.value = state.copy(errorResId = handleError(e))
                     }
@@ -270,7 +274,7 @@ public class AuthViewModel(private val authRepository: AuthRepository) : ViewMod
 
                         authRepository.requestPasswordReset(state.email.value)
 
-                        _uiEventChannel.send(element = AuthUiEvent.PasswordResetEmailSent)
+                        _uiEventSharedFlow.emit(value = AuthUiEvent.PasswordResetEmailSent)
                     } catch (e: Exception) {
                         _uiState.value = state.copy(errorResId = handleError(e))
                     }

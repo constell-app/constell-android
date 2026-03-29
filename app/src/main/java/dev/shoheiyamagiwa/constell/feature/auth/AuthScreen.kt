@@ -58,6 +58,10 @@ public fun AuthScreen(
     val successMessage = stringResource(id = R.string.auth_success_password_reset_email_sent)
 
     LaunchedEffect(key1 = Unit) {
+        viewModel.validateSession()
+    }
+
+    LaunchedEffect(key1 = Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is AuthUiEvent.NavigateToConfirmEmail -> {
@@ -73,10 +77,6 @@ public fun AuthScreen(
                 }
             }
         }
-    }
-
-    LaunchedEffect(key1 = Unit) {
-        viewModel.validateSession()
     }
 
     AuthContent(
