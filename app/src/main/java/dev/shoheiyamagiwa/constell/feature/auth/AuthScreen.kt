@@ -55,7 +55,6 @@ public fun AuthScreen(
     onNavigateToHome: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val successMessage = stringResource(id = R.string.auth_success_password_reset_email_sent)
 
     LaunchedEffect(key1 = Unit) {
         viewModel.validateSession()
