@@ -90,18 +90,18 @@ public sealed class AuthUiState {
         val email: FormField.EmailField = FormField.EmailField(),
         val password: FormField.PasswordField = FormField.PasswordField(),
         val confirmPassword: FormField.ConfirmPasswordField = FormField.ConfirmPasswordField(),
-        @param:StringRes val errorResId: Int? = null,
+        @get:StringRes val errorResId: Int? = null,
     ) : AuthUiState()
 
     public data class SignIn(
         val email: FormField.EmailField = FormField.EmailField(),
         val password: FormField.PasswordField = FormField.PasswordField(),
-        @param:StringRes val errorResId: Int? = null,
+        @get:StringRes val errorResId: Int? = null,
     ) : AuthUiState()
 
     public data class ForgotPassword(
         val email: FormField.EmailField = FormField.EmailField(),
-        @param:StringRes val errorResId: Int? = null,
+        @get:StringRes val errorResId: Int? = null,
     ) : AuthUiState()
 
     public object PasswordResetEmailSent : AuthUiState()
