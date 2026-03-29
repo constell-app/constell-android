@@ -28,7 +28,7 @@ import dev.shoheiyamagiwa.constell.ui.theme.Blue600
 import dev.shoheiyamagiwa.constell.ui.theme.Purple600
 
 @Composable
-fun AuthSubmitButton(
+public fun AuthSubmitButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier

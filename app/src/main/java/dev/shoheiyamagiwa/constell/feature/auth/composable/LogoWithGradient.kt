@@ -13,7 +13,7 @@ import dev.shoheiyamagiwa.constell.composable.AppLogo
 import dev.shoheiyamagiwa.constell.ui.theme.Purple500
 
 @Composable
-fun AuthLogoWithGradient(modifier: Modifier = Modifier) {
+public fun AuthLogoWithGradient(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
