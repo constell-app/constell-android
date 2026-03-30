@@ -14,6 +14,21 @@ Constellは、散らばった知識（Web記事、メモ、アイデアなど）
 - **ウォークスルー体験**: 初めてのユーザーでも理解しやすいように、機能のコンセプトを伝えるアニメーション付きの導入画面を用意しています。
 - **セキュアな認証**: Supabase Authを利用したメール/パスワード認証および各種ソーシャルログインに対応。
 
+## スクリーンショット
+
+|          ![Home](docs/images/home.png)           | ![Home Details](docs/images/home_details.png) |
+|:------------------------------------------------:|:---------------------------------------------:|
+|                      メイン画面                       |                    知識の繋がり                     |
+| ![Home Details 2](docs/images/home_details2.png) |  ![Auth Screen](docs/images/auth_screen.png)  |
+|                       詳細表示                       |                     認証画面                      |
+
+デモに使用させていただいた記事は以下の通りです。
+- [Headless UI・shadcn/ui・Material UI の違いを整理する](https://zenn.dev/mukaida/articles/69ec129fa16a6f)
+- [Next.js経験者のためのTanStack Router入門 ─ 型安全なルーティングの世界へ](https://zenn.dev/gemcook/articles/about-tanstack-router)
+- [Reactのフラグ地獄を状態遷移テーブルで解消する — Discriminated Union×テーブル駆動設計の実践](https://zenn.dev/okamyuji/articles/react-state-pattern-finite-state-machine)
+- [React Router から TanStack Router へ徐々に移行する技術](https://zenn.dev/bitkey_dev/articles/react-router-to-tanstack-router)
+- [Reactの設計におけるSOLID原則3つの使いどころ](https://zenn.dev/a_sugai/articles/e3f94abe938ab8)
+
 ## 技術スタック
 
 モダンなAndroid開発のエコシステムを採用し、スケーラビリティとメンテナンス性を重視した設計を行っています。
