@@ -101,4 +101,6 @@ dependencies {
 
     // MockK
     testImplementation(libs.mockk)
+
+    ktlintRuleset(libs.ktlint)
 }
