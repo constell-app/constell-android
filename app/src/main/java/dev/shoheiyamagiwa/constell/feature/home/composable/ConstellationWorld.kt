@@ -28,20 +28,11 @@ fun ConstellationWorld(
     satelliteNodeRadius: Dp = 42.dp,
     nodeGap: Dp = 150.dp,
     edgeWidth: Dp = 2.dp,
-    onCenterNodeClick: () -> Unit,
+    onMainNodeClick: () -> Unit,
     onSatelliteNodeClick: (nodeId: Int) -> Unit,
     isFocusing: Boolean = false
 ) {
-    Box(
-        modifier = modifier
-            .background(color = Slate900)
-            .dotBackground(
-                dotColor = Slate600,
-                dotRadius = 1.5.dp,
-                spacing = 30.dp,
-                alpha = 0.3F
-            )
-    ) {
+    Box(modifier = modifier.background(color = Slate900).dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
         Layout(
             content = {
                 Box(modifier = Modifier.layoutId("centerNode")) {
@@ -49,7 +40,7 @@ fun ConstellationWorld(
                         title = centerNodeTitle,
                         size = centerNodeRadius * 2,
                         isFocusing = isFocusing,
-                        onClick = onCenterNodeClick
+                        onClick = onMainNodeClick
                     )
                 }
                 satelliteNodeTitles.forEachIndexed { index, title ->
