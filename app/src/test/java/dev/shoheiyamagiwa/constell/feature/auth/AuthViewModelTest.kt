@@ -40,6 +40,7 @@ public class AuthViewModelTest {
         coEvery { authRepository.isAuthenticated() } returns false
 
         viewModel.validateSession()
+        runCurrent()
 
         assertTrue(viewModel.uiState.value is AuthUiState.SignIn)
     }
@@ -66,6 +67,7 @@ public class AuthViewModelTest {
     public fun `changeToSignUpUi updates state from SignIn to SignUp`() = runTest {
         coEvery { authRepository.isAuthenticated() } returns false
         viewModel.validateSession() // To get to SignIn state
+        runCurrent()
 
         viewModel.changeToSignUpUi()
 
@@ -76,6 +78,7 @@ public class AuthViewModelTest {
     public fun `submitSignIn with blank email sets error without using Patterns`() = runTest {
         coEvery { authRepository.isAuthenticated() } returns false
         viewModel.validateSession()
+        runCurrent()
 
         viewModel.updateEmail(value = "")
         viewModel.submit()

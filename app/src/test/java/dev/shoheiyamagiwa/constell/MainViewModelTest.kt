@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -26,6 +27,7 @@ public class MainViewModelTest {
         every { repository.isFirstLaunch } returns isFirstLaunchFlow
 
         val viewModel = MainViewModel(repository)
+        runCurrent()
         assertEquals(MainUiState.Success(isLoggedIn = false, isFirstLaunch = true), viewModel.uiState.value)
     }
 
@@ -37,12 +39,15 @@ public class MainViewModelTest {
         every { repository.isFirstLaunch } returns isFirstLaunchFlow
 
         val viewModel = MainViewModel(repository)
+        runCurrent()
         assertEquals(MainUiState.Success(isLoggedIn = false, isFirstLaunch = true), viewModel.uiState.value)
 
         isFirstLaunchFlow.value = false
+        runCurrent()
         assertEquals(MainUiState.Success(isLoggedIn = false, isFirstLaunch = false), viewModel.uiState.value)
 
         isLoggedInFlow.value = true
+        runCurrent()
         assertEquals(MainUiState.Success(isLoggedIn = true, isFirstLaunch = false), viewModel.uiState.value)
     }
 }

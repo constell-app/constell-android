@@ -7,6 +7,7 @@ import dev.shoheiyamagiwa.constell.util.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -38,6 +39,7 @@ public class HomeViewModelTest {
         coEvery { repository.getArticleConnections() } returns emptyList()
 
         viewModel.initializeScreen()
+        runCurrent()
 
         val state = viewModel.screenState.value
         assertTrue(state is HomeScreenState.Default)
@@ -61,6 +63,7 @@ public class HomeViewModelTest {
         coEvery { repository.getArticleConnections() } returns connections
 
         viewModel.initializeScreen()
+        runCurrent()
 
         val state = viewModel.screenState.value
         assertTrue(state is HomeScreenState.Default)
@@ -77,14 +80,15 @@ public class HomeViewModelTest {
     @Test
     public fun `selectArticleById updates mainArticleNode and shows details`() = runTest {
         val articles = listOf(
-            ArticleDto("1", "u1", "url1", "T1", listOf("tag1"), "S1", "2023-01-01"),
-            ArticleDto("2", "u1", "url2", "T2", listOf("tag2"), "S2", "2023-01-02")
+            ArticleDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01"),
+            ArticleDto(id = "2", userId = "u1", url = "url2", title = "T2", tags = listOf("tag2"), summary = "S2", createdAt = "2023-01-02")
         )
         coEvery { repository.getArticles() } returns articles
         coEvery { repository.getArticleConnections() } returns emptyList()
 
         viewModel.initializeScreen()
-        viewModel.selectArticleById("2")
+        runCurrent()
+        viewModel.selectArticleById(articleId = "2")
 
         val state = viewModel.screenState.value
         assertTrue(state is HomeScreenState.Default)
@@ -101,6 +105,7 @@ public class HomeViewModelTest {
         coEvery { repository.getArticleConnections() } returns emptyList()
 
         viewModel.initializeScreen()
+        runCurrent()
         viewModel.setShowArticleDetails(true)
 
         var state = viewModel.screenState.value as HomeScreenState.Default
@@ -117,6 +122,7 @@ public class HomeViewModelTest {
         coEvery { repository.getArticles() } throws exception
 
         viewModel.initializeScreen()
+        runCurrent()
 
         val state = viewModel.screenState.value
         assertTrue(state is HomeScreenState.Error)
