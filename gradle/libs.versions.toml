@@ -21,6 +21,7 @@ lifecycleViewmodelCompose = "2.10.0"
 mockk = "1.14.9"
 navigationCompose = "2.9.7"
 uiTextGoogleFonts = "1.10.4"
+ktlint = "14.2.0"
 
 [libraries]
 androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
@@ -65,3 +66,4 @@ realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
