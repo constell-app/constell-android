@@ -6,7 +6,6 @@ import dev.shoheiyamagiwa.constell.feature.home.data.ArticleConnectionDto
 import dev.shoheiyamagiwa.constell.feature.home.data.ArticleDto
 import dev.shoheiyamagiwa.constell.feature.home.data.ArticleRepository
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -58,7 +57,7 @@ public class HomeViewModel(private val articleRepository: ArticleRepository) : V
 
                 updateMainArticle(articleId = mainArticleDto.id, showArticleDetails = false)
             } catch (e: Exception) {
-                if (e is TimeoutCancellationException || e is CancellationException) {
+                if (e is CancellationException) {
                     throw e
                 }
 
