@@ -32,16 +32,7 @@ fun ConstellationWorld(
     onSatelliteNodeClicked: (nodeId: Int) -> Unit,
     isFocusing: Boolean = false
 ) {
-    Box(
-        modifier = modifier
-            .background(color = Slate900)
-            .dotBackground(
-                dotColor = Slate600,
-                dotRadius = 1.5.dp,
-                spacing = 30.dp,
-                alpha = 0.3F
-            )
-    ) {
+    Box(modifier = modifier.background(color = Slate900).dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
         Layout(
             content = {
                 Box(modifier = Modifier.layoutId("centerNode")) {
