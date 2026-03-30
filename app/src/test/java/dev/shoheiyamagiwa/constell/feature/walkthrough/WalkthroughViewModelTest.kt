@@ -1,17 +1,12 @@
 package dev.shoheiyamagiwa.constell.feature.walkthrough
 
-import dev.shoheiyamagiwa.constell.util.MainDispatcherRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 public class WalkthroughViewModelTest {
-    @get:Rule
-    public val mainDispatcherRule = MainDispatcherRule()
-
     private lateinit var viewModel: WalkthroughViewModel
 
     @Before
@@ -32,7 +27,7 @@ public class WalkthroughViewModelTest {
 
     @Test
     public fun `updateStep updates currentStep`() {
-        viewModel.updateStep(2)
+        viewModel.updateStep(pageIndex = 2)
         assertEquals(WalkthroughViewModel.WALKTHROUGH_STEPS[2], viewModel.currentStep.value)
     }
 
