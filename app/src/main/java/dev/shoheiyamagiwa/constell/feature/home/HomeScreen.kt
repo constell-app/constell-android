@@ -2,6 +2,7 @@ package dev.shoheiyamagiwa.constell.feature.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,9 +47,9 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val onAction: (HomeAction) -> Unit = remember(key1 = viewModel) {
         { action ->
             when (action) {
+                is HomeAction.Initialize -> viewModel.initializeScreen()
                 is HomeAction.SelectArticle -> viewModel.selectArticleById(articleId = action.id)
                 is HomeAction.SetShowDetails -> viewModel.setShowArticleDetails(action.show)
-                is HomeAction.Initialize -> viewModel.initializeScreen()
             }
         }
     }
@@ -56,74 +58,98 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         onAction(HomeAction.Initialize)
     }
 
-    HomeScreenContent(
-        screenState = screenState,
-        sheetState = sheetState,
-        onAction = onAction
-    )
+    HomeScreenContent(screenState = screenState, sheetState = sheetState, onAction = onAction)
 }
 
-@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-public fun HomeScreenContent(
-    screenState: HomeScreenState,
-    sheetState: SheetState,
-    onAction: (HomeAction) -> Unit
-) {
+public fun HomeScreenContent(screenState: HomeScreenState, sheetState: SheetState, onAction: (HomeAction) -> Unit) {
     Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
         when (screenState) {
             is HomeScreenState.Loading -> {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator()
-                }
+                LoadingContent()
             }
 
             is HomeScreenState.Default -> {
-                if (screenState.mainArticleNode == null) {
-                    Text(text = "No articles found.")
-                } else {
-                    val mainNode = screenState.mainArticleNode
-
-                    ConstellationWorld(
-                        nodeGap = 144.dp,
-                        edgeWidth = 2.dp,
-                        centerNodeTitle = mainNode.title,
-                        onMainNodeClicked = {
-                            onAction(HomeAction.SetShowDetails(show = true))
-                        },
-                        satelliteNodeTitles = mainNode.similarArticles.map { it.title },
-                        onSatelliteNodeClicked = { index ->
-                            mainNode.similarArticles.getOrNull(index)?.id?.let { id ->
-                                onAction(HomeAction.SelectArticle(id))
-                            }
-                        },
-                        isFocusing = screenState.showArticleDetails
-                    )
-
-                    if (screenState.showArticleDetails) {
-                        ArticleDetailSheet(
-                            articleNode = mainNode,
-                            sheetState = sheetState,
-                            onDismissRequest = { onAction(HomeAction.SetShowDetails(show = false)) }
-                        )
-                    }
-                }
+                DefaultContent(uiState = screenState, sheetState = sheetState, onAction = onAction)
             }
 
             is HomeScreenState.Error -> {
-                Text(text = "Error: ${screenState.exception.message}")
+                ErrorContent()
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Preview(showBackground = true)
 @Composable
-public fun ArticleDetailSheet(
-    articleNode: ArticleNode,
-    sheetState: SheetState,
-    onDismissRequest: () -> Unit
-) {
+private fun LoadingContent() {
+    Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DefaultContent(uiState: HomeScreenState.Default, sheetState: SheetState, onAction: (HomeAction) -> Unit) {
+    if (uiState.mainArticleNode == null) {
+        EmptyContent()
+    } else {
+        val mainNode = uiState.mainArticleNode
+
+        ConstellationWorld(
+            nodeGap = 144.dp,
+            edgeWidth = 2.dp,
+            centerNodeTitle = mainNode.title,
+            onMainNodeClicked = {
+                onAction(HomeAction.SetShowDetails(show = true))
+            },
+            satelliteNodeTitles = mainNode.similarArticles.map { it.title },
+            onSatelliteNodeClicked = { index ->
+                mainNode.similarArticles.getOrNull(index)?.id?.let { id ->
+                    onAction(HomeAction.SelectArticle(id))
+                }
+            },
+            isFocusing = uiState.showArticleDetails
+        )
+
+        if (uiState.showArticleDetails) {
+            ArticleDetailSheet(
+                articleNode = mainNode,
+                sheetState = sheetState,
+                onDismissRequest = { onAction(HomeAction.SetShowDetails(show = false)) }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EmptyContent() {
+    Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            // TODO: We must create an empty screen design to render this state
+            Text(text = "No articles found", color = Color.White)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ErrorContent() {
+    Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            // TODO: We must create an error screen design to render this state
+            Text(text = "An error has occurred", color = Color.White)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+public fun ArticleDetailSheet(articleNode: ArticleNode, sheetState: SheetState, onDismissRequest: () -> Unit) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
