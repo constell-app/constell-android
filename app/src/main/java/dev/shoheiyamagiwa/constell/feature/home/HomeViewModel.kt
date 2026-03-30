@@ -64,7 +64,9 @@ public class HomeViewModel(private val articleRepository: ArticleRepository) : V
 
                 _screenState.value = HomeScreenState.Error(exception = e)
             } finally {
-                _screenState.value = HomeScreenState.Default(mainArticleNode = null, showArticleDetails = false)
+                if (_screenState.value is HomeScreenState.Loading) {
+                    _screenState.value = HomeScreenState.Default(mainArticleNode = null, showArticleDetails = false)
+                }
             }
         }
     }
