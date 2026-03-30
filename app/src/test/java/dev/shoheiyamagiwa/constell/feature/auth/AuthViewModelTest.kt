@@ -6,6 +6,7 @@ import dev.shoheiyamagiwa.constell.util.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -58,7 +59,7 @@ public class AuthViewModelTest {
         runCurrent()
 
         assertTrue("Events should contain NavigateToHome. Current events: $events", events.contains(AuthUiEvent.NavigateToHome))
-        job.cancel()
+        job.cancelAndJoin()
     }
 
     @Test
