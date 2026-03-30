@@ -34,7 +34,7 @@ public class HomeViewModelTest {
     }
 
     @Test
-    public fun `initializeScreen sets Default with null mainArticleNode when no articles`() = runTest {
+    public fun `initializeScreen sets Default with null mainArticleNode when no articles`() = runTest(context = mainDispatcherRule.testDispatcher) {
         coEvery { repository.getArticles() } returns emptyList()
         coEvery { repository.getArticleConnections() } returns emptyList()
 
@@ -48,7 +48,7 @@ public class HomeViewModelTest {
     }
 
     @Test
-    public fun `initializeScreen sets Default with mainArticleNode and similar articles`() = runTest {
+    public fun `initializeScreen sets Default with mainArticleNode and similar articles`() = runTest(context = mainDispatcherRule.testDispatcher) {
         val articles = listOf(
             ArticleDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01"),
             ArticleDto(id = "2", userId = "u1", url = "url2", title = "T2", tags = listOf("tag2"), summary = "S2", createdAt = "2023-01-02"),
@@ -78,7 +78,7 @@ public class HomeViewModelTest {
     }
 
     @Test
-    public fun `selectArticleById updates mainArticleNode and shows details`() = runTest {
+    public fun `selectArticleById updates mainArticleNode and shows details`() = runTest(context = mainDispatcherRule.testDispatcher) {
         val articles = listOf(
             ArticleDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01"),
             ArticleDto(id = "2", userId = "u1", url = "url2", title = "T2", tags = listOf("tag2"), summary = "S2", createdAt = "2023-01-02")
@@ -98,7 +98,7 @@ public class HomeViewModelTest {
     }
 
     @Test
-    public fun `setShowArticleDetails updates showArticleDetails`() = runTest {
+    public fun `setShowArticleDetails updates showArticleDetails`() = runTest(context = mainDispatcherRule.testDispatcher) {
         coEvery { repository.getArticles() } returns listOf(
             ArticleDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01")
         )
@@ -117,7 +117,7 @@ public class HomeViewModelTest {
     }
 
     @Test
-    public fun `initializeScreen sets Error state when repository throws exception`() = runTest {
+    public fun `initializeScreen sets Error state when repository throws exception`() = runTest(context = mainDispatcherRule.testDispatcher) {
         val exception = Exception("Network error")
         coEvery { repository.getArticles() } throws exception
 

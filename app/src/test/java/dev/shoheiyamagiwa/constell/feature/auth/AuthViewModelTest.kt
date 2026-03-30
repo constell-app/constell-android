@@ -15,6 +15,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 public class AuthViewModelTest {
     @get:Rule
     public val mainDispatcherRule = MainDispatcherRule()
@@ -45,9 +46,8 @@ public class AuthViewModelTest {
         assertTrue(viewModel.uiState.value is AuthUiState.SignIn)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    public fun `validateSession emits NavigateToHome event when authenticated`() = runTest {
+    public fun `validateSession emits NavigateToHome event when authenticated`() = runTest(context = mainDispatcherRule.testDispatcher) {
         coEvery { authRepository.isAuthenticated() } returns true
         coEvery { authRepository.refreshSession() } returns Unit
 
@@ -64,7 +64,7 @@ public class AuthViewModelTest {
     }
 
     @Test
-    public fun `changeToSignUpUi updates state from SignIn to SignUp`() = runTest {
+    public fun `changeToSignUpUi updates state from SignIn to SignUp`() = runTest(context = mainDispatcherRule.testDispatcher) {
         coEvery { authRepository.isAuthenticated() } returns false
         viewModel.validateSession() // To get to SignIn state
         runCurrent()
@@ -75,7 +75,7 @@ public class AuthViewModelTest {
     }
 
     @Test
-    public fun `submitSignIn with blank email sets error without using Patterns`() = runTest {
+    public fun `submitSignIn with blank email sets error without using Patterns`() = runTest(context = mainDispatcherRule.testDispatcher) {
         coEvery { authRepository.isAuthenticated() } returns false
         viewModel.validateSession()
         runCurrent()

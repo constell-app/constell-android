@@ -20,7 +20,7 @@ public class MainViewModelTest {
     private val repository: UserPreferencesRepository = mockk()
 
     @Test
-    public fun `initial state becomes Success when repository emits values`() = runTest {
+    public fun `initial state becomes Success when repository emits values`() = runTest(context = mainDispatcherRule.testDispatcher) {
         val isLoggedInFlow = MutableStateFlow(value = false)
         val isFirstLaunchFlow = MutableStateFlow(value = true)
         every { repository.isLoggedIn } returns isLoggedInFlow
@@ -32,7 +32,7 @@ public class MainViewModelTest {
     }
 
     @Test
-    public fun `uiState updates when repository flows emit new values`() = runTest {
+    public fun `uiState updates when repository flows emit new values`() = runTest(context = mainDispatcherRule.testDispatcher) {
         val isLoggedInFlow = MutableStateFlow(value = false)
         val isFirstLaunchFlow = MutableStateFlow(value = true)
         every { repository.isLoggedIn } returns isLoggedInFlow
