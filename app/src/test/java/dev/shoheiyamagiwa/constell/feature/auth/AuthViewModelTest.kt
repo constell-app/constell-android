@@ -37,7 +37,7 @@ public class AuthViewModelTest {
     }
 
     @Test
-    public fun `validateSession sets state to SignIn when not authenticated`() = runTest {
+    public fun `validateSession sets state to SignIn when not authenticated`() = runTest(context = mainDispatcherRule.testDispatcher) {
         coEvery { authRepository.isAuthenticated() } returns false
 
         viewModel.validateSession()
