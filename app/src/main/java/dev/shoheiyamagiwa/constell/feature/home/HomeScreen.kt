@@ -64,19 +64,17 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 public fun HomeScreenContent(screenState: HomeScreenState, sheetState: SheetState, onAction: (HomeAction) -> Unit) {
-    Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
-        when (screenState) {
-            is HomeScreenState.Loading -> {
-                LoadingContent()
-            }
+    when (screenState) {
+        is HomeScreenState.Loading -> {
+            LoadingContent()
+        }
 
-            is HomeScreenState.Default -> {
-                DefaultContent(uiState = screenState, sheetState = sheetState, onAction = onAction)
-            }
+        is HomeScreenState.Default -> {
+            DefaultContent(uiState = screenState, sheetState = sheetState, onAction = onAction)
+        }
 
-            is HomeScreenState.Error -> {
-                ErrorContent()
-            }
+        is HomeScreenState.Error -> {
+            ErrorContent()
         }
     }
 }
