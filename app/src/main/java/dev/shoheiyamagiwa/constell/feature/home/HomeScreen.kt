@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.shoheiyamagiwa.constell.composable.Background
 import dev.shoheiyamagiwa.constell.feature.home.composable.ConstellationWorld
-import dev.shoheiyamagiwa.constell.feature.home.composable.extensions.dotBackground
 import dev.shoheiyamagiwa.constell.ui.theme.Slate100
 import dev.shoheiyamagiwa.constell.ui.theme.Slate400
 import dev.shoheiyamagiwa.constell.ui.theme.Slate600
@@ -82,7 +81,7 @@ public fun HomeScreenContent(screenState: HomeScreenState, sheetState: SheetStat
 @Preview(showBackground = true)
 @Composable
 private fun LoadingContent() {
-    Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
+    Background {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator()
         }
@@ -126,7 +125,7 @@ private fun DefaultContent(uiState: HomeScreenState.Default, sheetState: SheetSt
 @Preview(showBackground = true)
 @Composable
 private fun EmptyContent() {
-    Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
+    Background {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             // TODO: We must create an empty screen design to render this state
             Text(text = "No articles found", color = Color.White)
@@ -137,7 +136,7 @@ private fun EmptyContent() {
 @Preview(showBackground = true)
 @Composable
 private fun ErrorContent() {
-    Background(modifier = Modifier.dotBackground(dotColor = Slate600, dotRadius = 1.5.dp, spacing = 30.dp, alpha = 0.3F)) {
+    Background {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             // TODO: We must create an error screen design to render this state
             Text(text = "An error has occurred", color = Color.White)
