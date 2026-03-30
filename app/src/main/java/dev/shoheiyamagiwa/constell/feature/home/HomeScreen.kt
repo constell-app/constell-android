@@ -100,11 +100,11 @@ private fun DefaultContent(uiState: HomeScreenState.Default, sheetState: SheetSt
             nodeGap = 144.dp,
             edgeWidth = 2.dp,
             centerNodeTitle = mainNode.title,
-            onMainNodeClicked = {
+            onMainNodeClick = {
                 onAction(HomeAction.SetShowDetails(show = true))
             },
             satelliteNodeTitles = mainNode.similarArticles.map { it.title },
-            onSatelliteNodeClicked = { index ->
+            onSatelliteNodeClick = { index ->
                 mainNode.similarArticles.getOrNull(index)?.id?.let { id ->
                     onAction(HomeAction.SelectArticle(id))
                 }
