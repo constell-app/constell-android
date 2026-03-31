@@ -51,11 +51,9 @@ public class MainViewModel(
     public fun saveSharedArticle(articleUrl: String) {
         viewModelScope.launch {
             val userId = userPreferencesRepository.userId.first()
-            if (userId.isEmpty()) {
-                throw IllegalStateException("User is not logged in")
+            if (userId.isNotBlank()) {
+                articleRepository.saveArticle(userId = userId, url = articleUrl)
             }
-
-            articleRepository.saveArticle(userId = userId, url = articleUrl)
         }
     }
 }

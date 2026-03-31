@@ -7,7 +7,9 @@ import dev.shoheiyamagiwa.constell.feature.home.data.ArticleRepository
 import dev.shoheiyamagiwa.constell.feature.home.model.Article
 import dev.shoheiyamagiwa.constell.feature.home.model.ArticleConnection
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -34,12 +36,20 @@ public sealed interface HomeAction {
     public object Initialize : HomeAction
 }
 
+// FIXME: This should be integrated with HomeAction
+public sealed interface HomeUiEvent {
+    public data object NavigateToAuthScreen : HomeUiEvent
+}
+
 public class HomeViewModel(
     private val articleRepository: ArticleRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     private val _screenState = MutableStateFlow<HomeScreenState>(value = HomeScreenState.Loading)
     public val screenState = _screenState.asStateFlow()
+
+    private val _uiEvent = MutableSharedFlow<HomeUiEvent>()
+    public val uiEvent = _uiEvent.asSharedFlow()
 
     private var cachedArticles: List<Article> = emptyList()
     private var cachedConnections: List<ArticleConnection> = emptyList()
@@ -54,7 +64,8 @@ public class HomeViewModel(
             try {
                 val userId = userPreferencesRepository.userId.first()
                 if (userId.isEmpty()) {
-                    throw IllegalStateException("User is not logged in")
+                    _uiEvent.emit(value = HomeUiEvent.NavigateToAuthScreen)
+                    return@launch
                 }
 
                 cachedArticles = articleRepository.getArticles(userId = userId)

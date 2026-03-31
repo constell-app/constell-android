@@ -39,7 +39,10 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+public fun HomeScreen(
+    viewModel: HomeViewModel = koinViewModel(),
+    onNavigateToAuthScreen: () -> Unit
+) {
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState()
 
@@ -55,6 +58,14 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 
     LaunchedEffect(key1 = Unit) {
         onAction(HomeAction.Initialize)
+
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                HomeUiEvent.NavigateToAuthScreen -> {
+                    onNavigateToAuthScreen()
+                }
+            }
+        }
     }
 
     HomeScreenContent(screenState = screenState, sheetState = sheetState, onAction = onAction)
@@ -62,7 +73,11 @@ public fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-public fun HomeScreenContent(screenState: HomeScreenState, sheetState: SheetState, onAction: (HomeAction) -> Unit) {
+public fun HomeScreenContent(
+    screenState: HomeScreenState,
+    sheetState: SheetState,
+    onAction: (HomeAction) -> Unit
+) {
     when (screenState) {
         is HomeScreenState.Loading -> {
             LoadingContent()
@@ -90,7 +105,11 @@ private fun LoadingContent() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DefaultContent(uiState: HomeScreenState.Default, sheetState: SheetState, onAction: (HomeAction) -> Unit) {
+private fun DefaultContent(
+    uiState: HomeScreenState.Default,
+    sheetState: SheetState,
+    onAction: (HomeAction) -> Unit
+) {
     if (uiState.mainArticleNode == null) {
         EmptyContent()
     } else {
@@ -146,7 +165,11 @@ private fun ErrorContent() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-public fun ArticleDetailSheet(articleNode: ArticleNode, sheetState: SheetState, onDismissRequest: () -> Unit) {
+public fun ArticleDetailSheet(
+    articleNode: ArticleNode,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit
+) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
@@ -154,22 +177,45 @@ public fun ArticleDetailSheet(articleNode: ArticleNode, sheetState: SheetState, 
         contentColor = Slate100,
         tonalElevation = 8.dp
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 48.dp)) {
-            Text(text = articleNode.title, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 24.dp, end = 24.dp, bottom = 48.dp)
+        ) {
+            Text(
+                text = articleNode.title,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             FlowRow(modifier = Modifier.fillMaxWidth(), maxItemsInEachRow = 5) {
                 articleNode.tags.forEach { tag ->
-                    Surface(modifier = Modifier.padding(end = 8.dp, bottom = 8.dp), color = Slate600, shape = RoundedCornerShape(size = 16.dp)) {
-                        Text(text = "#$tag", modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp), fontSize = 12.sp, color = Slate100)
+                    Surface(
+                        modifier = Modifier.padding(end = 8.dp, bottom = 8.dp),
+                        color = Slate600,
+                        shape = RoundedCornerShape(size = 16.dp)
+                    ) {
+                        Text(
+                            text = "#$tag",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                            fontSize = 12.sp,
+                            color = Slate100
+                        )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = articleNode.description, fontSize = 16.sp, lineHeight = 24.sp, color = Slate400)
+            Text(
+                text = articleNode.description,
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                color = Slate400
+            )
         }
     }
 }

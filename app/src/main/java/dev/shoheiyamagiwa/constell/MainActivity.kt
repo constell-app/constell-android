@@ -27,7 +27,9 @@ public class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        handleSharedUrl(intent)
+        if (savedInstanceState == null) {
+            handleSharedUrl(intent)
+        }
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
@@ -97,7 +99,11 @@ private fun NavigationDeclaration(
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable<Home> {
-            HomeScreen()
+            HomeScreen(onNavigateToAuthScreen = {
+                navController.navigate(route = Auth) {
+                    popUpTo(route = Home) { inclusive = true }
+                }
+            })
         }
         composable<Walkthrough> {
             WalkthroughScreen(

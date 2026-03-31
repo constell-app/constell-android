@@ -147,13 +147,12 @@ public class AuthViewModel(
             try {
                 if (authRepository.isAuthenticated() != null) {
                     val userId = authRepository.refreshSession()
+                        ?: throw IllegalStateException("Failed to refresh session")
 
-                    if (userId != null) {
-                        userPreferencesRepository.updateUserId(userId = userId)
-                        userPreferencesRepository.updateLoggedIn(isLoggedIn = true)
+                    userPreferencesRepository.updateUserId(userId = userId)
+                    userPreferencesRepository.updateLoggedIn(isLoggedIn = true)
 
-                        _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToHome)
-                    }
+                    _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToHome)
                     return@launch
                 } else {
                     userPreferencesRepository.updateUserId(userId = "")
