@@ -1,7 +1,9 @@
 package dev.shoheiyamagiwa.constell
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -29,6 +31,9 @@ public class MainActivity : ComponentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        handleIntent(intent)
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT)
@@ -64,6 +69,12 @@ public class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        handleIntent(intent)
     }
 }
 
@@ -116,6 +127,16 @@ private fun NavigationDeclaration(
 //                    }
                 }
             )
+        }
+    }
+}
+
+private fun handleIntent(intent: Intent?) {
+    if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+        val receivedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+
+        if (receivedText != null) {
+            Log.d("Received Text", receivedText)
         }
     }
 }
