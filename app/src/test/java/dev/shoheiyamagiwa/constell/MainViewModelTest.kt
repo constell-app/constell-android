@@ -1,6 +1,7 @@
 package dev.shoheiyamagiwa.constell
 
 import dev.shoheiyamagiwa.constell.data.repository.UserPreferencesRepository
+import dev.shoheiyamagiwa.constell.feature.home.data.ArticleRepository
 import dev.shoheiyamagiwa.constell.util.MainDispatcherRule
 import io.mockk.every
 import io.mockk.mockk
@@ -18,36 +19,57 @@ public class MainViewModelTest {
     public val mainDispatcherRule = MainDispatcherRule()
 
     private val repository: UserPreferencesRepository = mockk()
+    private val articleRepository: ArticleRepository = mockk()
 
     @Test
-    public fun `initial state becomes Success when repository emits values`() = runTest(context = mainDispatcherRule.testDispatcher) {
-        val isLoggedInFlow = MutableStateFlow(value = false)
-        val isFirstLaunchFlow = MutableStateFlow(value = true)
-        every { repository.isLoggedIn } returns isLoggedInFlow
-        every { repository.isFirstLaunch } returns isFirstLaunchFlow
+    public fun `initial state becomes Success when repository emits values`() =
+        runTest(context = mainDispatcherRule.testDispatcher) {
+            val isLoggedInFlow = MutableStateFlow(value = false)
+            val isFirstLaunchFlow = MutableStateFlow(value = true)
+            every { repository.isLoggedIn } returns isLoggedInFlow
+            every { repository.isFirstLaunch } returns isFirstLaunchFlow
 
-        val viewModel = MainViewModel(repository)
-        runCurrent()
-        assertEquals(MainUiState.Success(isLoggedIn = false, isFirstLaunch = true), viewModel.uiState.value)
-    }
+            val viewModel = MainViewModel(
+                userPreferencesRepository = repository,
+                articleRepository = articleRepository
+            )
+            runCurrent()
+            assertEquals(
+                MainUiState.Success(isLoggedIn = false, isFirstLaunch = true),
+                viewModel.uiState.value
+            )
+        }
 
     @Test
-    public fun `uiState updates when repository flows emit new values`() = runTest(context = mainDispatcherRule.testDispatcher) {
-        val isLoggedInFlow = MutableStateFlow(value = false)
-        val isFirstLaunchFlow = MutableStateFlow(value = true)
-        every { repository.isLoggedIn } returns isLoggedInFlow
-        every { repository.isFirstLaunch } returns isFirstLaunchFlow
+    public fun `uiState updates when repository flows emit new values`() =
+        runTest(context = mainDispatcherRule.testDispatcher) {
+            val isLoggedInFlow = MutableStateFlow(value = false)
+            val isFirstLaunchFlow = MutableStateFlow(value = true)
+            every { repository.isLoggedIn } returns isLoggedInFlow
+            every { repository.isFirstLaunch } returns isFirstLaunchFlow
 
-        val viewModel = MainViewModel(repository)
-        runCurrent()
-        assertEquals(MainUiState.Success(isLoggedIn = false, isFirstLaunch = true), viewModel.uiState.value)
+            val viewModel = MainViewModel(
+                userPreferencesRepository = repository,
+                articleRepository = articleRepository
+            )
+            runCurrent()
+            assertEquals(
+                MainUiState.Success(isLoggedIn = false, isFirstLaunch = true),
+                viewModel.uiState.value
+            )
 
-        isFirstLaunchFlow.value = false
-        runCurrent()
-        assertEquals(MainUiState.Success(isLoggedIn = false, isFirstLaunch = false), viewModel.uiState.value)
+            isFirstLaunchFlow.value = false
+            runCurrent()
+            assertEquals(
+                MainUiState.Success(isLoggedIn = false, isFirstLaunch = false),
+                viewModel.uiState.value
+            )
 
-        isLoggedInFlow.value = true
-        runCurrent()
-        assertEquals(MainUiState.Success(isLoggedIn = true, isFirstLaunch = false), viewModel.uiState.value)
-    }
+            isLoggedInFlow.value = true
+            runCurrent()
+            assertEquals(
+                MainUiState.Success(isLoggedIn = true, isFirstLaunch = false),
+                viewModel.uiState.value
+            )
+        }
 }
