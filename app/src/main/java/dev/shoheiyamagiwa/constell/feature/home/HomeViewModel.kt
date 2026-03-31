@@ -2,12 +2,14 @@ package dev.shoheiyamagiwa.constell.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.shoheiyamagiwa.constell.feature.home.data.ArticleConnectionDto
-import dev.shoheiyamagiwa.constell.feature.home.data.ArticleDto
+import dev.shoheiyamagiwa.constell.data.repository.UserPreferencesRepository
 import dev.shoheiyamagiwa.constell.feature.home.data.ArticleRepository
+import dev.shoheiyamagiwa.constell.feature.home.model.Article
+import dev.shoheiyamagiwa.constell.feature.home.model.ArticleConnection
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 public data class ArticleNode(
@@ -32,12 +34,15 @@ public sealed interface HomeAction {
     public object Initialize : HomeAction
 }
 
-public class HomeViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
+public class HomeViewModel(
+    private val articleRepository: ArticleRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
     private val _screenState = MutableStateFlow<HomeScreenState>(value = HomeScreenState.Loading)
     public val screenState = _screenState.asStateFlow()
 
-    private var cachedArticles: List<ArticleDto> = emptyList()
-    private var cachedConnections: List<ArticleConnectionDto> = emptyList()
+    private var cachedArticles: List<Article> = emptyList()
+    private var cachedConnections: List<ArticleConnection> = emptyList()
 
     /**
      * Initialize the home screen state.
@@ -47,8 +52,13 @@ public class HomeViewModel(private val articleRepository: ArticleRepository) : V
             _screenState.value = HomeScreenState.Loading
 
             try {
-                cachedArticles = articleRepository.getArticles()
-                cachedConnections = articleRepository.getArticleConnections()
+                val userId = userPreferencesRepository.userId.first()
+                if (userId.isEmpty()) {
+                    throw IllegalStateException("User is not logged in")
+                }
+
+                cachedArticles = articleRepository.getArticles(userId = userId)
+                cachedConnections = articleRepository.getArticleConnections(userId = userId)
 
                 if (cachedArticles.isEmpty()) {
                     _screenState.value =

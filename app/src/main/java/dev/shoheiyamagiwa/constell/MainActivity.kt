@@ -3,7 +3,6 @@ package dev.shoheiyamagiwa.constell
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -12,27 +11,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.shoheiyamagiwa.constell.data.repository.UserPreferencesRepository
 import dev.shoheiyamagiwa.constell.feature.auth.AuthScreen
 import dev.shoheiyamagiwa.constell.feature.home.HomeScreen
 import dev.shoheiyamagiwa.constell.feature.walkthrough.composable.WalkthroughScreen
 import dev.shoheiyamagiwa.constell.ui.theme.ConstellTheme
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 public class MainActivity : ComponentActivity() {
-    private val repository: UserPreferencesRepository by inject()
+    private val viewModel: MainViewModel by viewModel()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        handleIntent(intent)
+        handleSharedUrl(intent)
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
@@ -40,7 +35,6 @@ public class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            val viewModel: MainViewModel = koinViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             splashScreen.setKeepOnScreenCondition {
@@ -54,14 +48,10 @@ public class MainActivity : ComponentActivity() {
                             isLoggedIn = state.isLoggedIn,
                             isFirstLaunch = state.isFirstLaunch,
                             onFinishWalkthrough = {
-                                lifecycleScope.launch {
-                                    repository.updateFirstLaunch(isFirstLaunch = false)
-                                }
+                                viewModel.updateFirstLaunch(isFirstLaunch = false)
                             },
                             onLoginSuccess = {
-                                lifecycleScope.launch {
-                                    repository.updateLoggedIn(isLoggedIn = true)
-                                }
+                                viewModel.updateLoggedIn(isLoggedIn = true)
                             }
                         )
                     }
@@ -75,7 +65,18 @@ public class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        handleIntent(intent)
+        handleSharedUrl(intent)
+    }
+
+    private fun handleSharedUrl(intent: Intent?) {
+        if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            // FIXME: We need to check if the shared text is valid URL or not
+            val articleUrl = intent.getStringExtra(Intent.EXTRA_TEXT)
+
+            if (articleUrl != null) {
+                viewModel.saveSharedArticle(articleUrl = articleUrl)
+            }
+        }
     }
 }
 
@@ -128,16 +129,6 @@ private fun NavigationDeclaration(
 //                    }
                 }
             )
-        }
-    }
-}
-
-private fun handleIntent(intent: Intent?) {
-    if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
-        val receivedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-
-        if (receivedText != null) {
-            Log.d("Received Text", receivedText)
         }
     }
 }

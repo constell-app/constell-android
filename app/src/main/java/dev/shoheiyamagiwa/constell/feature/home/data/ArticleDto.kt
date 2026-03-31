@@ -4,30 +4,37 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ArticleDto(
+public data class ArticleRequestDto(
+    @SerialName(value = "user_id")
+    val userId: String,
+    val url: String
+)
+
+@Serializable
+public data class ArticleResponseDto(
     val id: String,
-    @SerialName("user_id")
+    @SerialName(value = "user_id")
     val userId: String,
     val url: String,
     val title: String,
     val tags: List<String>,
     val summary: String,
     val status: String,
-    @SerialName("created_at")
+    @SerialName(value = "created_at")
     val createdAt: String
 )
 
 @Serializable
-data class ArticleConnectionDto(
+public data class ArticleConnectionResponseDto(
     val id: String,
-    @SerialName("user_id")
+    @SerialName(value = "user_id")
     val userId: String,
-    @SerialName("source_article_id")
+    @SerialName(value = "source_article_id")
     val sourceArticleId: String,
-    @SerialName("target_article_id")
+    @SerialName(value = "target_article_id")
     val targetArticleId: String,
-    @SerialName("similarity_score")
+    @SerialName(value = "similarity_score")
     val similarityScore: Double,
-    @SerialName("created_at")
+    @SerialName(value = "created_at")
     val createdAt: String
 )

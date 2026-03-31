@@ -1,7 +1,7 @@
 package dev.shoheiyamagiwa.constell.feature.home
 
-import dev.shoheiyamagiwa.constell.feature.home.data.ArticleConnectionDto
-import dev.shoheiyamagiwa.constell.feature.home.data.ArticleDto
+import dev.shoheiyamagiwa.constell.feature.home.data.ArticleConnectionResponseDto
+import dev.shoheiyamagiwa.constell.feature.home.data.ArticleResponseDto
 import dev.shoheiyamagiwa.constell.feature.home.data.ArticleRepository
 import dev.shoheiyamagiwa.constell.util.MainDispatcherRule
 import io.mockk.coEvery
@@ -50,13 +50,13 @@ public class HomeViewModelTest {
     @Test
     public fun `initializeScreen sets Default with mainArticleNode and similar articles`() = runTest(context = mainDispatcherRule.testDispatcher) {
         val articles = listOf(
-            ArticleDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01"),
-            ArticleDto(id = "2", userId = "u1", url = "url2", title = "T2", tags = listOf("tag2"), summary = "S2", createdAt = "2023-01-02"),
-            ArticleDto(id = "3", userId = "u1", url = "url3", title = "T3", tags = listOf("tag3"), summary = "S3", createdAt = "2023-01-03")
+            ArticleResponseDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01"),
+            ArticleResponseDto(id = "2", userId = "u1", url = "url2", title = "T2", tags = listOf("tag2"), summary = "S2", createdAt = "2023-01-02"),
+            ArticleResponseDto(id = "3", userId = "u1", url = "url3", title = "T3", tags = listOf("tag3"), summary = "S3", createdAt = "2023-01-03")
         )
         val connections = listOf(
-            ArticleConnectionDto(id = "c1", userId = "u1", sourceArticleId = "1", targetArticleId = "2", similarityScore = 0.9, createdAt = "2023-01-04"),
-            ArticleConnectionDto(id = "c2", userId = "u1", sourceArticleId = "3", targetArticleId = "1", similarityScore = 0.7, createdAt = "2023-01-05")
+            ArticleConnectionResponseDto(id = "c1", userId = "u1", sourceArticleId = "1", targetArticleId = "2", similarityScore = 0.9, createdAt = "2023-01-04"),
+            ArticleConnectionResponseDto(id = "c2", userId = "u1", sourceArticleId = "3", targetArticleId = "1", similarityScore = 0.7, createdAt = "2023-01-05")
         )
 
         coEvery { repository.getArticles() } returns articles
@@ -80,8 +80,8 @@ public class HomeViewModelTest {
     @Test
     public fun `selectArticleById updates mainArticleNode and shows details`() = runTest(context = mainDispatcherRule.testDispatcher) {
         val articles = listOf(
-            ArticleDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01"),
-            ArticleDto(id = "2", userId = "u1", url = "url2", title = "T2", tags = listOf("tag2"), summary = "S2", createdAt = "2023-01-02")
+            ArticleResponseDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01"),
+            ArticleResponseDto(id = "2", userId = "u1", url = "url2", title = "T2", tags = listOf("tag2"), summary = "S2", createdAt = "2023-01-02")
         )
         coEvery { repository.getArticles() } returns articles
         coEvery { repository.getArticleConnections() } returns emptyList()
@@ -100,7 +100,7 @@ public class HomeViewModelTest {
     @Test
     public fun `setShowArticleDetails updates showArticleDetails`() = runTest(context = mainDispatcherRule.testDispatcher) {
         coEvery { repository.getArticles() } returns listOf(
-            ArticleDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01")
+            ArticleResponseDto(id = "1", userId = "u1", url = "url1", title = "T1", tags = listOf("tag1"), summary = "S1", createdAt = "2023-01-01")
         )
         coEvery { repository.getArticleConnections() } returns emptyList()
 

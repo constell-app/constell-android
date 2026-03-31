@@ -9,18 +9,22 @@ import io.github.jan.supabase.auth.providers.Github
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 
-public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) : AuthRepository, EmailAuthProvider, GoogleAuthProvider, GitHubAuthProvider {
+public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) : AuthRepository,
+    EmailAuthProvider, GoogleAuthProvider, GitHubAuthProvider {
+
     override suspend fun signOut() {
         supabaseClient.auth.signOut()
     }
 
-    override suspend fun isAuthenticated(): Boolean {
-        return supabaseClient.auth.currentSessionOrNull() != null
+    override suspend fun isAuthenticated(): String? {
+        return supabaseClient.auth.currentSessionOrNull()?.user?.id
     }
 
-    override suspend fun refreshSession() {
+    override suspend fun refreshSession(): String? {
         try {
             supabaseClient.auth.refreshCurrentSession()
+
+            return supabaseClient.auth.currentUserOrNull()?.id
         } catch (e: Exception) {
             if (e is AuthRestException) {
                 throw when (e.errorCode) {
@@ -49,12 +53,14 @@ public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) 
         }
     }
 
-    override suspend fun signInWithEmail(email: String, password: String) {
+    override suspend fun signInWithEmail(email: String, password: String): String? {
         try {
             supabaseClient.auth.signInWith(provider = Email, config = {
                 this.email = email
                 this.password = password
             })
+
+            return supabaseClient.auth.currentUserOrNull()?.id
         } catch (e: AuthRestException) {
             throw when (e.errorCode) {
                 AuthErrorCode.InvalidCredentials -> AuthException.InvalidCredentials()
@@ -81,11 +87,15 @@ public class SupabaseAuthRepository(private val supabaseClient: SupabaseClient) 
         })
     }
 
-    override suspend fun signInWithGoogle() {
+    override suspend fun signInWithGoogle(): String? {
         supabaseClient.auth.signInWith(provider = Google) // TODO set up specific configs
+
+        return supabaseClient.auth.currentUserOrNull()?.id
     }
 
-    override suspend fun signInWithGitHub() {
+    override suspend fun signInWithGitHub(): String? {
         supabaseClient.auth.signInWith(provider = Github) // TODO set up specific configs
+
+        return supabaseClient.auth.currentUserOrNull()?.id
     }
 }
