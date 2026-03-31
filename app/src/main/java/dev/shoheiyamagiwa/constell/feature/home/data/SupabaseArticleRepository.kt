@@ -6,7 +6,11 @@ import io.github.jan.supabase.postgrest.postgrest
 public class SupabaseArticleRepository(private val supabaseClient: SupabaseClient) : ArticleRepository {
     override suspend fun getArticles(): List<ArticleDto> {
         return supabaseClient.postgrest["articles"]
-            .select()
+            .select {
+                filter {
+                    eq(column = "status", value = "completed")
+                }
+            }
             .decodeList<ArticleDto>()
     }
 

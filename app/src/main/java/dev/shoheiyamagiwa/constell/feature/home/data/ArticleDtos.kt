@@ -12,6 +12,7 @@ data class ArticleDto(
     val title: String,
     val tags: List<String>,
     val summary: String,
+    val status: String,
     @SerialName("created_at")
     val createdAt: String
 )

@@ -20,7 +20,9 @@ public data class ArticleNode(
 
 public sealed class HomeScreenState {
     object Loading : HomeScreenState()
-    data class Default(val mainArticleNode: ArticleNode?, val showArticleDetails: Boolean) : HomeScreenState()
+    data class Default(val mainArticleNode: ArticleNode?, val showArticleDetails: Boolean) :
+        HomeScreenState()
+
     data class Error(val exception: Exception) : HomeScreenState()
 }
 
@@ -49,7 +51,8 @@ public class HomeViewModel(private val articleRepository: ArticleRepository) : V
                 cachedConnections = articleRepository.getArticleConnections()
 
                 if (cachedArticles.isEmpty()) {
-                    _screenState.value = HomeScreenState.Default(mainArticleNode = null, showArticleDetails = false)
+                    _screenState.value =
+                        HomeScreenState.Default(mainArticleNode = null, showArticleDetails = false)
                     return@launch
                 }
                 // FIXME: For now, take the first article as the main node
@@ -64,7 +67,8 @@ public class HomeViewModel(private val articleRepository: ArticleRepository) : V
                 _screenState.value = HomeScreenState.Error(exception = e)
             } finally {
                 if (_screenState.value is HomeScreenState.Loading) {
-                    _screenState.value = HomeScreenState.Default(mainArticleNode = null, showArticleDetails = false)
+                    _screenState.value =
+                        HomeScreenState.Default(mainArticleNode = null, showArticleDetails = false)
                 }
             }
         }
