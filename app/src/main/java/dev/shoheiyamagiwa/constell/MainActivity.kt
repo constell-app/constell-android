@@ -38,6 +38,7 @@ public class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(scrim = Color.TRANSPARENT)
         )
+
         setContent {
             val viewModel: MainViewModel = koinViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
