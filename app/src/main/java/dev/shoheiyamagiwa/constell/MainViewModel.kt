@@ -1,5 +1,6 @@
 package dev.shoheiyamagiwa.constell
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.shoheiyamagiwa.constell.data.repository.UserPreferencesRepository
@@ -50,9 +51,14 @@ public class MainViewModel(
 
     public fun saveSharedArticle(articleUrl: String) {
         viewModelScope.launch {
-            val userId = userPreferencesRepository.userId.first()
-            if (userId.isNotBlank()) {
-                articleRepository.saveArticle(userId = userId, url = articleUrl)
+            try {
+                val userId = userPreferencesRepository.userId.first()
+                if (userId.isNotBlank()) {
+                    articleRepository.saveArticle(userId = userId, url = articleUrl)
+                }
+            } catch (e: Exception) {
+                // Just logging for now
+                Log.e("MainViewModel", "Failed to save shared article: $e")
             }
         }
     }
