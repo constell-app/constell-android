@@ -58,7 +58,7 @@ public class MainViewModel(
                 }
             } catch (e: Exception) {
                 // Just logging for now
-                Log.e("MainViewModel", "Failed to save shared article: $e")
+                Log.e("MainViewModel", "Failed to save shared article", e)
             }
         }
     }
