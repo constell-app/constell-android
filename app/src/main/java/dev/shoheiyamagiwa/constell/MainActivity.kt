@@ -51,9 +51,6 @@ public class MainActivity : ComponentActivity() {
                             isFirstLaunch = state.isFirstLaunch,
                             onFinishWalkthrough = {
                                 viewModel.updateFirstLaunch(isFirstLaunch = false)
-                            },
-                            onLoginSuccess = {
-                                viewModel.updateLoggedIn(isLoggedIn = true)
                             }
                         )
                     }
@@ -86,8 +83,7 @@ public class MainActivity : ComponentActivity() {
 private fun NavigationDeclaration(
     isLoggedIn: Boolean,
     isFirstLaunch: Boolean,
-    onFinishWalkthrough: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onFinishWalkthrough: () -> Unit
 ) {
     val navController = rememberNavController()
 
