@@ -357,6 +357,21 @@ public class AuthViewModel(
                     userPreferencesRepository.updateLoggedIn(isLoggedIn = true)
 
                     _uiEventSharedFlow.emit(value = AuthUiEvent.NavigateToHome)
+                } else {
+                    userPreferencesRepository.updateUserId(userId = "")
+                    userPreferencesRepository.updateLoggedIn(isLoggedIn = false)
+
+                    val authFailure = Exception("Authentication failed")
+                    when (val currentState = uiState.value) {
+                        is AuthUiState.SignIn -> {
+                            _uiState.value =
+                                currentState.copy(errorResId = handleError(e = authFailure))
+                        }
+
+                        else -> {
+                            _uiState.value = state.copy(errorResId = handleError(e = authFailure))
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 userPreferencesRepository.updateUserId(userId = "")
