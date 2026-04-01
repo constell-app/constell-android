@@ -7,6 +7,7 @@ import dev.shoheiyamagiwa.constell.feature.home.data.ArticleRepository
 import dev.shoheiyamagiwa.constell.feature.home.model.Article
 import dev.shoheiyamagiwa.constell.feature.home.model.ArticleConnection
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -48,7 +49,10 @@ public class HomeViewModel(
     private val _screenState = MutableStateFlow<HomeScreenState>(value = HomeScreenState.Loading)
     public val screenState = _screenState.asStateFlow()
 
-    private val _uiEvent = MutableSharedFlow<HomeUiEvent>()
+    private val _uiEvent = MutableSharedFlow<HomeUiEvent>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     public val uiEvent = _uiEvent.asSharedFlow()
 
     private var cachedArticles: List<Article> = emptyList()
